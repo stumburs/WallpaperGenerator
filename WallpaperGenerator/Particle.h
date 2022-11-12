@@ -9,15 +9,15 @@ struct Particle
     Vector2 vel; // Velocity
     Vector2 acc; // Acceleration
 
-    void Update(const std::vector<std::vector<Vector2>>& flowfield, float max_speed, int WIDTH, int HEIGHT, int SCALE);
+    void Update(const std::vector<std::vector<Vector2>>& flowfield, const float& max_speed, const int& WIDTH, const int &HEIGHT, const int &SCALE);
 
-    void Follow(const std::vector<std::vector<Vector2>>& flowfield, int SCALE);
+    void Follow(const std::vector<std::vector<Vector2>>& flowfield, const int &SCALE);
 
-    void ApplyForce(Vector2 force);
+    void ApplyForce(const Vector2 &force);
 
-    void WrapAroundEdges(int WIDTH, int HEIGHT);
+    void WrapAroundEdges(const int &WIDTH, const int &HEIGHT);
 
-    void DrawCircle(float size, Color color);
+    void DrawCircle(const float &size, const Color &color);
 
-    void DrawPixel(Color color);
+    void DrawPixel(const Color& color);
 };
