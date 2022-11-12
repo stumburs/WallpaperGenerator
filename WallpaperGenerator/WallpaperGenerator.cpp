@@ -1,9 +1,14 @@
 #include <raylib.h>
 #include <iostream>
+#include "PerlinNoise.hpp"
+
+const int kWindowWidth = 1280;
+const int kWindowHeight = 720;
 
 int main()
 {
-    InitWindow(1280, 720, "Wallpaper Generator");
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
