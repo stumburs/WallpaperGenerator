@@ -5,15 +5,15 @@
 #include "Functions.h"
 #include "PerlinNoise.hpp"
 
-const int kWindowWidth = 1280;
-const int kWindowHeight = 720;
+const int kWindowWidth = 1600;
+const int kWindowHeight = 900;
 
 int scale = 20;
 
 std::vector<std::vector<Vector2>> flowfield;
 
 float flowfield_strength = 0.01f;
-int particle_count = 10000;
+int particle_count = 5000;
 float particle_speed = 1.0f;
 float particle_size = 1.0f;
 unsigned char particle_strength = 1;
@@ -26,11 +26,20 @@ float y_mult = 0.02;
 float z_mult = 0.02;
 float z = 0;
 
+bool to_shader = false;
+
 int main()
 {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
     SetTargetFPS(0);
+
+	Shader shader = LoadShader(0, "PIXELIZER.fs");
+	float resolution[2] = { kWindowWidth, kWindowHeight };
+	//SetShaderValue(shader, GetShaderLocation(shader, "resolution"), resolution, SHADER_UNIFORM_VEC2);
+
+	
+	std::cout << GetShaderLocation(shader, "texture0") << "\n\n\n\n";
 
     int render_width = kWindowWidth / scale + 1;
     int render_height = kWindowHeight / scale + 1;
@@ -61,6 +70,11 @@ int main()
         }
     }
 
+	RenderTexture2D image = LoadRenderTexture(kWindowWidth, kWindowHeight);
+	BeginTextureMode(image);
+	ClearBackground(BLACK);
+	EndTextureMode();
+
     // Set noise height
     z = noise_height;
 
@@ -70,6 +84,12 @@ int main()
 	{
 		// Update
 		{
+
+			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			{
+				to_shader = !to_shader;
+			}
+
 			// Flowfield
 			for (int x = 0; x < flowfield.size(); x++)
 			{
@@ -90,6 +110,23 @@ int main()
 				particles[i].Update(flowfield, particle_speed, kWindowWidth, kWindowHeight, scale);
 			}
 
+			BeginTextureMode(image);
+			{
+
+				// Draw Particles
+				for (int i = 0; i < particles.size(); i++)
+				{
+					particles[i].DrawPixel({ 255,
+												(unsigned char)Map(particles[i].pos.x, 0, kWindowWidth, 0, 255),
+												(unsigned char)Map(particles[i].pos.y, 0, kWindowHeight, 0, 255),
+												particle_strength });
+				}
+
+			}
+			EndTextureMode();
+
+
+
 			// Move through noise
 			z += 0.06;
 
@@ -98,23 +135,31 @@ int main()
 		// Draw
 		BeginDrawing();
 		{
-			//ClearBackground(BLACK);
-			if (!background_cleared)
+			ClearBackground(BLACK);
+			BeginBlendMode(BLEND_ADD_COLORS);
+
+			//DrawCircle(400, 300, 20, { 255, 255, 0, 255 });
+
+			//SetShaderValueTexture(shader, GetShaderLocation(shader, "texture0"), image.texture);
+
+			if (to_shader)
 			{
-				ClearBackground(BLACK);
-				background_cleared = true;
+				BeginShaderMode(shader);
+
 			}
 
-			// Draw Particles
-			for (int i = 0; i < particles.size(); i++)
+			DrawTextureRec(image.texture, { 0, 0, (float)image.texture.width, (float)-image.texture.height }, { 0, 0 }, WHITE);
+			EndShaderMode();
+
+			EndBlendMode();
+			DrawFPS(20, 20);
+
+			if (to_shader)
 			{
-				particles[i].DrawPixel({ 255,
-											(unsigned char)Map(particles[i].pos.x, 0, kWindowWidth, 0, 255),
-											(unsigned char)Map(particles[i].pos.y, 0, kWindowHeight, 0, 255),
-											particle_strength });
+				DrawText("YES", 20, 40, 20, GREEN);
+
 			}
 
-			std::cout << GetFPS() << "\n";
 		}
 		EndDrawing();
 	}
