@@ -24,6 +24,9 @@
     <ClCompile Include="include\style\flowfield\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\style\flowfield\Flowfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\style\flowfield\Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\style\flowfield\Flowfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
