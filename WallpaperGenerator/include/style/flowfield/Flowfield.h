@@ -13,14 +13,14 @@ public:
 	std::vector<std::vector<Vector2>> flowfield;
 
 	float flowfield_strength = 0.01f;
-	int particle_count = 20000;
+	int particle_count = 5000;
 	float particle_speed = 1.0f;
 	float particle_size = 1.0f;
 	unsigned char particle_strength = 1;
 	std::vector<Particle> particles;
 
 	float noise_height = 0;
-	int noise_detail = 6;
+	int noise_detail = 4;
 	float x_mult = 0.02f;
 	float y_mult = 0.02f;
 	float z_mult = 0.02f;
@@ -29,7 +29,8 @@ public:
 	int render_width;
 	int render_height;
 
-	const siv::PerlinNoise perlin;
+	siv::PerlinNoise::seed_type seed;
+	siv::PerlinNoise perlin;
 
 	RenderTexture2D image;
 

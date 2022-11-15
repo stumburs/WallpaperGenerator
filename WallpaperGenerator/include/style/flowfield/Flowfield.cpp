@@ -7,8 +7,8 @@ Flowfield::Flowfield()
 	render_height = kWindowHeight / scale + 1;
 
     // Perlin noise setup
-    const siv::PerlinNoise::seed_type seed = 69420u;
-    const siv::PerlinNoise perlin{ seed };
+    seed = 69420u;
+    perlin.reseed(seed);
 
     // Init particles
     for (int i = 0; i < particle_count; i++)
