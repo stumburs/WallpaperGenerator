@@ -34,9 +34,6 @@ int main()
 	{
 		// Update
 		{
-			// Enable/disable shader
-			/*if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-				shader_on = !shader_on;*/
 
 			// Update flowfield
 			f.Update();
@@ -47,10 +44,10 @@ int main()
 		{
 			ClearBackground(RAYWHITE);
 
-
 			// Preview Box
 			DrawRectangle(kWindowWidth - 850, 50, 800, 450, BLACK);
 			DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, {255, 255, 255, 60});
+
 			shader_on = GuiCheckBox({ kWindowWidth - 850, 525, 40, 40 }, "SHADER", shader_on);
 
 			BeginBlendMode(BLEND_ADD_COLORS);
@@ -59,7 +56,6 @@ int main()
 			if (shader_on)
 				BeginShaderMode(shader);
 
-			//DrawTextureRec(f.image.texture, { 0, 0, (float)f.image.texture.width, (float)-f.image.texture.height }, { 0, 0 }, WHITE);
 			DrawTexturePro(f.image.texture, { 0, 0, (float)f.image.texture.width, (float)-f.image.texture.height }, { kWindowWidth - 850, 50, 800, 450}, {0, 0}, 0.0f, WHITE);
 			EndShaderMode();
 
