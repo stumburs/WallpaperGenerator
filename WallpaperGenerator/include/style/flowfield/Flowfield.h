@@ -2,22 +2,24 @@
 #include "raylib.h"
 #include "Particle.h"
 #include "../../PerlinNoise.hpp"
+#include <map>
 class Flowfield
 {
 public:
-	const int kWindowWidth = 1600;
-	const int kWindowHeight = 900;
+	int window_width = 1600;
+	int window_height = 900;
 
 	int scale = 20;
+	int render_width;
+	int render_height;
 
-	std::vector<std::vector<Vector2>> flowfield;
+	siv::PerlinNoise::seed_type seed;
 
 	float flowfield_strength = 0.01f;
-	int particle_count = 5000;
+	int particle_count = 10000;
 	float particle_speed = 1.0f;
 	float particle_size = 1.0f;
 	unsigned char particle_strength = 1;
-	std::vector<Particle> particles;
 
 	float noise_height = 0;
 	int noise_detail = 4;
@@ -26,16 +28,18 @@ public:
 	float z_mult = 0.02f;
 	float z = 0.0f;
 
-	int render_width;
-	int render_height;
 
-	siv::PerlinNoise::seed_type seed;
 	siv::PerlinNoise perlin;
-
+	std::vector<std::vector<Vector2>> flowfield;
+	std::vector<Particle> particles;
 	RenderTexture2D image;
 
 public:
 	Flowfield();
 	void Update(int active_blend_mode);
+	void Reset(Color background_color);
+	void SetValues(std::map<std::string, float> user_values);
+	void InitParticles();
+	void InitFlowfield();
 };
 

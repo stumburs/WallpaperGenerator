@@ -20,6 +20,25 @@ Rectangle shader_checkbox = { kWindowWidth - 850, 525, 40, 40 };
 Rectangle blend_slider = { kWindowWidth - 650, 525, 400, 40 };
 Rectangle save_image = { kWindowWidth - 850, 585, 40, 40 };
 Rectangle reset_image = { kWindowWidth - 650, 585, 40, 40 };
+Rectangle update_settings = { kWindowWidth - 850, 645, 40, 40 };
+
+std::map<std::string, float> user_values = {
+	{ "window_width", 1600 },
+	{ "window_height", 900 },
+	{ "scale", 20 },
+	{ "seed", 69420u},
+	{ "flowfield_strength", 0.01f },
+	{ "particle_count", 10000},
+	{ "particle_speed", 1.0f },
+	{ "particle_size", 1.0f },
+	{ "particle_strength", 2u },
+	{ "noise_height", 0.0f },
+	{ "noise_detail", 4},
+	{ "x_mult", 0.02f},
+	{ "y_mult", 0.02f},
+	{ "z_mult", 0.02f},
+	{ "z", 0.00f }
+ };
 
 enum Algorithm
 {
@@ -104,15 +123,16 @@ int main()
 
 				if (GuiLabelButton(reset_image, "Reset flowfield"))
 				{
-					f.image = LoadRenderTexture(kWindowWidth, kWindowHeight);
-					BeginTextureMode(f.image);
-					ClearBackground(BLACK);
-					EndTextureMode();
+					f.Reset(BLACK);
 				}
 
 				if (GuiLabelButton(save_image, "Save Image")) {
 					Image img = LoadImageFromTexture(f.image.texture);
 					ExportImage(img, "text.png");
+				}
+
+				if (GuiLabelButton(update_settings, "Update settings")) {
+					f.SetValues(user_values);
 				}
 
 				switch (active_blend_mode)
