@@ -14,6 +14,13 @@ const int kWindowHeight = 900;
 
 bool shader_on = false;
 
+Rectangle preview_rect = { kWindowWidth - 850, 50, 800, 450 };
+
+Rectangle shader_checkbox = { kWindowWidth - 850, 525, 40, 40 };
+Rectangle blend_slider = { kWindowWidth - 650, 525, 400, 40 };
+Rectangle save_image = { kWindowWidth - 850, 585, 40, 40 };
+Rectangle reset_image = { kWindowWidth - 650, 585, 40, 40 };
+
 enum Algorithm
 {
 	NONE = 0,
@@ -22,6 +29,8 @@ enum Algorithm
 };
 
 int active_algorithm = Algorithm::NONE;
+int active_blend_mode = BlendMode::BLEND_ALPHA;
+
 
 int main()
 {
@@ -37,11 +46,10 @@ int main()
 	Flowfield f;
 	Shapes s;
 
-	// Default - BLEND_ADD_COLORS
-	int active_blend_mode = 3;
-
+	//GuiLoadStyle("include/style/gui/jungle.rgs");
+	// https://www.color-hex.com/color-palette/28549
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
-	GuiLoadStyle("/include/style/gui/dark.rgs");
+	//GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, 0x1e2124);
 
 	while (!WindowShouldClose())
 	{
@@ -53,7 +61,7 @@ int main()
 				break;
 			case FLOWFIELD:
 				// Update flowfield
-				f.Update();
+				f.Update(active_blend_mode);
 				break;
 			case SHAPES:
 				// Update shapes
@@ -88,49 +96,62 @@ int main()
 				break;
 			case FLOWFIELD:
 				// Preview Box
-				DrawRectangle(kWindowWidth - 850, 50, 800, 450, BLACK);
+				DrawRectangleRec(preview_rect, BLACK);
 
-				shader_on = GuiCheckBox({ kWindowWidth - 850, 525, 40, 40 }, "SHADER", shader_on);
+				shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
-				active_blend_mode = GuiScrollBar({ 60, 60, 400, 40 }, active_blend_mode, 0, 6);
+				active_blend_mode = GuiScrollBar(blend_slider, active_blend_mode, 0, 6);
+
+				if (GuiLabelButton(reset_image, "Reset flowfield"))
+				{
+					f.image = LoadRenderTexture(kWindowWidth, kWindowHeight);
+					BeginTextureMode(f.image);
+					ClearBackground(BLACK);
+					EndTextureMode();
+				}
+
+				if (GuiLabelButton(save_image, "Save Image")) {
+					Image img = LoadImageFromTexture(f.image.texture);
+					ExportImage(img, "text.png");
+				}
 
 				switch (active_blend_mode)
 				{
 				case 0:
-					DrawText("BLEND_ALPHA", 180, 100, 20, BLACK);
+					DrawText("BLEND_ALPHA", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 1:
-					DrawText("BLEND_ADDITIVE", 180, 100, 20, BLACK);
+					DrawText("BLEND_ADDITIVE", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADDITIVE", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 2:
-					DrawText("BLEND_MULTIPLIED", 180, 100, 20, BLACK);
+					DrawText("BLEND_MULTIPLIED", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_MULTIPLIED", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 3:
-					DrawText("BLEND_ADD_COLORS", 180, 100, 20, BLACK);
+					DrawText("BLEND_ADD_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADD_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 4:
-					DrawText("BLEND_SUBTRACT_COLORS", 180, 100, 20, BLACK);
+					DrawText("BLEND_SUBTRACT_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_SUBTRACT_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 5:
-					DrawText("BLEND_ALPHA_PREMULTIPLY", 180, 100, 20, BLACK);
+					DrawText("BLEND_ALPHA_PREMULTIPLY", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA_PREMULTIPLY", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				case 6:
-					DrawText("BLEND_CUSTOM", 180, 100, 20, BLACK);
+					DrawText("BLEND_CUSTOM", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_CUSTOM", 20) / 2, blend_slider.y + 10, 20, BLACK);
 					break;
 				default:
 					break;
 				}
 
-				BeginBlendMode(active_blend_mode);
+				//BeginBlendMode(active_blend_mode);
 
 				// Apply shader
 				if (shader_on)
 					BeginShaderMode(shader);
 
-				DrawTexturePro(f.image.texture, { 0, 0, (float)f.image.texture.width, (float)-f.image.texture.height }, { kWindowWidth - 850, 50, 800, 450 }, { 0, 0 }, 0.0f, WHITE);
+				DrawTexturePro(f.image.texture, { 0, 0, (float)f.image.texture.width, (float)-f.image.texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 				EndShaderMode();
 
-				EndBlendMode();
+				//EndBlendMode();
 				DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 				
 				break;

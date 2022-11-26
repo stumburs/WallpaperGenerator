@@ -7,21 +7,22 @@ Shapes::Shapes()
     // Init texture
     image = LoadRenderTexture(kWindowWidth, kWindowHeight);
     BeginTextureMode(image);
-    ClearBackground(BLACK);
+    ClearBackground(WHITE);
     EndTextureMode();
+
+    shapes_to_draw = 100;
 }
 
 void Shapes::Update()
 {
     // Draw to texture
-    if (shapes_drawn < 10)
+    while (shapes_drawn < shapes_to_draw)
     {
+        Color c = { rand() % 256, rand() % 256, rand() % 256, 20};
         BeginTextureMode(image);
-        for (int i = 0; i < 10; i++)
-        {
-            DrawCircle(rand() % kWindowWidth, rand() % kWindowHeight, 100.0f, WHITE);
-            shapes_drawn++;
-        }
+        DrawPoly({ (float)(rand() % kWindowWidth), (float)(rand() % kWindowHeight) }, rand() % 8 + 2, rand() % 100 + 100, 0.0f, c);
+            //DrawCircle(rand() % kWindowWidth, rand() % kWindowHeight, 100.0f, WHITE);
+        shapes_drawn++;
         EndTextureMode();
     }
 }

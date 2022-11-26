@@ -36,6 +36,6 @@ public:
 
 public:
 	Flowfield();
-	void Update();
+	void Update(int active_blend_mode);
 };
 

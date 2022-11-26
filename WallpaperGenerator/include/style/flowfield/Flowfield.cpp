@@ -42,7 +42,7 @@ Flowfield::Flowfield()
     z = noise_height;
 }
 
-void Flowfield::Update()
+void Flowfield::Update(int active_blend_mode)
 {
     // Flowfield
     for (int x = 0; x < flowfield.size(); x++)
@@ -66,6 +66,7 @@ void Flowfield::Update()
     // Draw to texture
     BeginTextureMode(image);
     {
+        BeginBlendMode(active_blend_mode);
         // Draw Particles
         for (int i = 0; i < particles.size(); i++)
         {
@@ -74,6 +75,7 @@ void Flowfield::Update()
                                         (unsigned char)Map(particles[i].pos.y, 0, kWindowHeight, 0, 255),
                                         particle_strength });
         }
+        EndBlendMode();
     }
     EndTextureMode();
 
