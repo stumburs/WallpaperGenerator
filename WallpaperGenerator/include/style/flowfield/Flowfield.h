@@ -37,8 +37,8 @@ public:
 public:
 	Flowfield();
 	void Update(int active_blend_mode);
-	void Reset(Color background_color);
-	void SetValues(std::map<std::string, float> user_values);
+	void ResetImage(Color background_color);
+	void Reset(std::map<std::string, float> user_values);
 	void InitParticles();
 	void InitFlowfield();
 };

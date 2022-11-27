@@ -16,7 +16,7 @@ Flowfield::Flowfield()
     InitFlowfield();
 
     // Reset / Init Texture
-    Reset(BLACK);
+    ResetImage(BLACK);
 }
 
 void Flowfield::Update(int active_blend_mode)
@@ -61,7 +61,7 @@ void Flowfield::Update(int active_blend_mode)
 }
 
 // Init / Reset image
-void Flowfield::Reset(Color background_color)
+void Flowfield::ResetImage(Color background_color)
 {
     image = LoadRenderTexture(window_width, window_height);
     BeginTextureMode(image);
@@ -70,7 +70,7 @@ void Flowfield::Reset(Color background_color)
     z = noise_height;
 }
 
-void Flowfield::SetValues(std::map<std::string, float> user_values)
+void Flowfield::Reset(std::map<std::string, float> user_values)
 {
     window_width = (int)user_values["window_width"];
     window_height = (int)user_values["window_height"];
@@ -88,8 +88,14 @@ void Flowfield::SetValues(std::map<std::string, float> user_values)
     z_mult = user_values["z_mult"];
     z = user_values["z"];
 
+    render_width = window_width / scale + 1;
+    render_height = window_height / scale + 1;
+
+    perlin.reseed(seed);
+
     InitParticles();
-    Reset(BLACK);
+    InitFlowfield();
+    ResetImage(BLACK);
 }
 
 void Flowfield::InitParticles() {
