@@ -85,12 +85,14 @@ int active_menu = Menu::MAIN;
 int active_algorithm = Algorithm::NONE;
 int active_blend_mode = BlendMode::BLEND_ALPHA;
 
+Vector2 scroll_pos = { 0 };
+
 int main()
 {
 	// Init window
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
-    SetTargetFPS(0);
+	SetConfigFlags(FLAG_MSAA_4X_HINT);
+	InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
+	SetTargetFPS(0);
 
 	// Init shader
 	Shader shader = LoadShader(0, "./include/shader/PIXELIZER.fs");
@@ -177,44 +179,58 @@ int main()
 
 					active_blend_mode = GuiSliderBar(blend_slider, NULL, NULL, active_blend_mode, 0, 6);
 
-					// User values
-					user_values["window_width"] = (int)GuiSliderBar(window_width_rect, TextFormat("%d", (int)user_values["window_width"]), "Image Width", (int)user_values["window_width"], 1, 1920);
-					user_values["window_height"] = (int)GuiSliderBar(window_height_rect, TextFormat("%d", (int)user_values["window_height"]), "Image Height", (int)user_values["window_height"], 1, 1080);
-					user_values["scale"] = (int)GuiSliderBar(scale_rect, TextFormat("%d", (int)user_values["scale"]), "Image Scale", (int)user_values["scale"], 1, 40);
-					//GuiDrawText("(seed input)", seed_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-					user_values["flowfield_strength"] = GuiSliderBar(flowfield_strength_rect, TextFormat("%0.3f", user_values["flowfield_strength"]), "Flowfield Strength", user_values["flowfield_strength"], 0.001f, 0.1f);
-					user_values["particle_count"] = (int)GuiSliderBar(particle_count_rect, TextFormat("%d", (int)user_values["particle_count"]), "Particle count", (int)user_values["particle_count"], 500, 50000);
-					user_values["particle_speed"] = GuiSliderBar(particle_speed_rect, TextFormat("%0.1f", user_values["particle_speed"]), "Particle Speed", user_values["particle_speed"], 0.0f, 2.0f);
-					//GuiDrawText("(particle size input)", particle_size_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-					user_values["particle_strength"] = (unsigned char)GuiSliderBar(particle_strength_rect, TextFormat("%d", (unsigned char)user_values["particle_strength"]), "Particle Strength", (unsigned char)user_values["particle_strength"], 1, 16);
-					//GuiDrawText("(noise height input)", noise_height_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-					user_values["noise_detail"] = (int)GuiSliderBar(noise_detail_rect, TextFormat("%d", (int)user_values["noise_detail"]), "Noise Detail", (int)user_values["noise_detail"], 1, 16);
-					user_values["x_mult"] = GuiSliderBar(x_mult_rect, TextFormat("%0.2f", user_values["x_mult"]), "X-Axis Multiplier", user_values["x_mult"], 0.01f, 0.2f);
-					user_values["y_mult"] = GuiSliderBar(y_mult_rect, TextFormat("%0.2f", user_values["y_mult"]), "Y-Axis Multiplier", user_values["y_mult"], 0.01f, 0.2f);
-					user_values["z_mult"] = GuiSliderBar(z_mult_rect, TextFormat("%0.2f", user_values["z_mult"]), "Z-Axis Multiplier", user_values["z_mult"], 0.01f, 0.2f);
 
-					if (CheckCollisionPointRec(GetMousePosition(), window_width_rect))
+					/*
+					*  !!!!!!!!!!!!!!!
+					* 
+					*	REFACTOR ASAP
+					* 
+					*  !!!!!!!!!!!!!!!
+					*/
+
+					Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 1000 }, &scroll_pos);
+					BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
+
+					// User values
+					user_values["window_width"] = (int)GuiSliderBar({ window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }, TextFormat("%d", (int)user_values["window_width"]), "Image Width", (int)user_values["window_width"], 1, 1920);
+					user_values["window_height"] = (int)GuiSliderBar({ window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }, TextFormat("%d", (int)user_values["window_height"]), "Image Height", (int)user_values["window_height"], 1, 1080);
+					user_values["scale"] = (int)GuiSliderBar({ scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }, TextFormat("%d", (int)user_values["scale"]), "Image Scale", (int)user_values["scale"], 1, 40);
+					//GuiDrawText("(seed input)", seed_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
+					user_values["flowfield_strength"] = GuiSliderBar({ flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }, TextFormat("%0.3f", user_values["flowfield_strength"]), "Flowfield Strength", user_values["flowfield_strength"], 0.001f, 0.1f);
+					user_values["particle_count"] = (int)GuiSliderBar({ particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }, TextFormat("%d", (int)user_values["particle_count"]), "Particle count", (int)user_values["particle_count"], 500, 50000);
+					user_values["particle_speed"] = GuiSliderBar({ particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }, TextFormat("%0.1f", user_values["particle_speed"]), "Particle Speed", user_values["particle_speed"], 0.0f, 2.0f);
+					//GuiDrawText("(particle size input)", particle_size_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
+					user_values["particle_strength"] = (unsigned char)GuiSliderBar({ particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }, TextFormat("%d", (unsigned char)user_values["particle_strength"]), "Particle Strength", (unsigned char)user_values["particle_strength"], 1, 16);
+					//GuiDrawText("(noise height input)", noise_height_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
+					user_values["noise_detail"] = (int)GuiSliderBar({ noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }, TextFormat("%d", (int)user_values["noise_detail"]), "Noise Detail", (int)user_values["noise_detail"], 1, 16);
+					user_values["x_mult"] = GuiSliderBar({ x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }, TextFormat("%0.2f", user_values["x_mult"]), "X-Axis Multiplier", user_values["x_mult"], 0.01f, 0.2f);
+					user_values["y_mult"] = GuiSliderBar({ y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }, TextFormat("%0.2f", user_values["y_mult"]), "Y-Axis Multiplier", user_values["y_mult"], 0.01f, 0.2f);
+					user_values["z_mult"] = GuiSliderBar({ z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }, TextFormat("%0.2f", user_values["z_mult"]), "Z-Axis Multiplier", user_values["z_mult"], 0.01f, 0.2f);
+
+					if (CheckCollisionPointRec(GetMousePosition(), { window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }))
 						GuiDrawText("Final image horizontal resolution", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), window_height_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }))
 						GuiDrawText("Final image horizontal resolution", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), scale_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }))
 						GuiDrawText("Lower number = more detail, but worse performance", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), flowfield_strength_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }))
 						GuiDrawText("How accurately particles follow the flowfield", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), particle_count_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }))
 						GuiDrawText("Amount of particles", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), particle_speed_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }))
 						GuiDrawText("How quickly particles move", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), particle_strength_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }))
 						GuiDrawText("Particle color intensity", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), noise_detail_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }))
 						GuiDrawText("Perlin noise octaves. Higher number = worse performance", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), x_mult_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }))
 						GuiDrawText("Noise x-axis multiplier", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), y_mult_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }))
 						GuiDrawText("Noise y-axis multiplier", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
-					if (CheckCollisionPointRec(GetMousePosition(), z_mult_rect))
+					if (CheckCollisionPointRec(GetMousePosition(), { z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }))
 						GuiDrawText("Noise z-axis multiplier", { GetMousePosition().x, GetMousePosition().y - 10, 0, 0 }, TEXT_ALIGN_CENTER, DARKGRAY);
+
+					EndScissorMode();
 
 					if (GuiLabelButton(reset_image, "Reset flowfield"))
 					{
@@ -327,5 +343,5 @@ int main()
 		}
 		EndDrawing();
 	}
-    CloseWindow();
+	CloseWindow();
 }
