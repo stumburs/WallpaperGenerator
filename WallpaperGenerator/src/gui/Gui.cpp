@@ -43,6 +43,9 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float> &user
 	z_rect = { 60, 880, 400, 40 };
 
 	scroll_pos = { 0 };
+
+	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+
 }
 
 void Gui::Draw()

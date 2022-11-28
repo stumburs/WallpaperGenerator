@@ -4,12 +4,11 @@
 #undef RAYGUI_IMPLEMENTATION
 #include <iostream>
 #include <vector>
-#include "include/Functions.h"
-#include "include/PerlinNoise.hpp"
-#include "include/style/flowfield/Particle.h"
-#include "include/style/flowfield/Flowfield.h"
-#include "include/style/shapes/Shapes.h"
-#include "include/style/gui/Gui.h"
+#include "Functions.hpp"
+#include "PerlinNoise.hpp"
+#include "style/flowfield/Flowfield.h"
+#include "style/shapes/Shapes.h"
+#include "gui/Gui.h"
 
 const int kWindowWidth = 1600;
 const int kWindowHeight = 900;
@@ -58,7 +57,6 @@ int main()
 
 	//GuiLoadStyle("include/style/gui/jungle.rgs");
 	// https://www.color-hex.com/color-palette/28549
-	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 	//GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, 0x1e2124);
 
 	while (!WindowShouldClose())

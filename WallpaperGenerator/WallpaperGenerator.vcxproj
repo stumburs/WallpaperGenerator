@@ -129,23 +129,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\style\gui\Gui.cpp" />
-    <ClCompile Include="include\style\flowfield\Flowfield.cpp" />
-    <ClCompile Include="include\Functions.cpp" />
-    <ClCompile Include="include\style\flowfield\Particle.cpp" />
-    <ClCompile Include="include\style\shapes\Shapes.cpp" />
-    <ClCompile Include="WallpaperGenerator.cpp" />
+    <ClCompile Include="src\Functions.cpp" />
+    <ClCompile Include="src\gui\Gui.cpp" />
+    <ClCompile Include="src\style\flowfield\Flowfield.cpp" />
+    <ClCompile Include="src\style\flowfield\Particle.cpp" />
+    <ClCompile Include="src\style\shapes\Shapes.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\style\gui\Gui.h" />
-    <ClInclude Include="include\style\flowfield\Flowfield.h" />
-    <ClInclude Include="include\Functions.h" />
-    <ClInclude Include="include\style\flowfield\Particle.h" />
-    <ClInclude Include="include\PerlinNoise.hpp" />
-    <ClInclude Include="include\style\shapes\Shapes.h" />
+    <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\gui\Gui.h" />
+    <ClInclude Include="src\PerlinNoise.hpp" />
+    <ClInclude Include="src\style\flowfield\Flowfield.h" />
+    <ClInclude Include="src\style\flowfield\Particle.h" />
+    <ClInclude Include="src\style\shapes\Shapes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

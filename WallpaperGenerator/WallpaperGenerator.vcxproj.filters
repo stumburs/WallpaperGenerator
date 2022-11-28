@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WallpaperGenerator.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\Functions.cpp">
+    <ClCompile Include="src\style\flowfield\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\style\flowfield\Particle.cpp">
+    <ClCompile Include="src\style\flowfield\Flowfield.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\style\flowfield\Flowfield.cpp">
+    <ClCompile Include="src\style\shapes\Shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\style\shapes\Shapes.cpp">
+    <ClCompile Include="src\gui\Gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\style\gui\Gui.cpp">
+    <ClCompile Include="src\Functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,22 +38,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\PerlinNoise.hpp">
+    <ClInclude Include="src\style\flowfield\Particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Functions.h">
+    <ClInclude Include="src\style\flowfield\Flowfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\style\flowfield\Particle.h">
+    <ClInclude Include="src\style\shapes\Shapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\style\flowfield\Flowfield.h">
+    <ClInclude Include="src\gui\Gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\style\shapes\Shapes.h">
+    <ClInclude Include="src\Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\style\gui\Gui.h">
+    <ClInclude Include="src\PerlinNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
