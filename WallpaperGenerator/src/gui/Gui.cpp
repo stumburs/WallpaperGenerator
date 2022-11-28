@@ -1,9 +1,8 @@
 #include "Gui.h"
 #include "raygui.h"
 
-Gui::Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float> &user_values, Texture2D &flowfield_texture)
+Gui::Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float> &user_values)
 {
-	this->flowfield_texture = flowfield_texture;
 	this->user_values = user_values;
 
 	this->kWindowWidth = kWindowWidth;
@@ -65,7 +64,7 @@ void Gui::Draw()
 		case Gui::Algorithm::NONE:
 			break;
 		case Gui::Algorithm::FLOWFIELD:
-			FlowfieldScreen(user_values, flowfield_texture);
+			FlowfieldScreen(user_values);
 			break;
 		case Gui::Algorithm::SHAPES:
 			ShapesScreen();
@@ -78,6 +77,11 @@ void Gui::Draw()
 	default:
 		break;
 	}
+}
+
+void Gui::Update(const Texture2D &preview_texture)
+{
+	this->preview_texture = preview_texture;
 }
 
 void Gui::MainMenuScreen()
@@ -102,7 +106,7 @@ void Gui::CreateScreen()
 		active_algorithm = Algorithm::SHAPES;
 	}
 }
-void Gui::FlowfieldScreen(std::map<std::string, float>& user_values, Texture2D &flowfield_texture)
+void Gui::FlowfieldScreen(std::map<std::string, float>& user_values)
 {
 	// Preview Box
 	DrawRectangleRec(preview_rect, WHITE);
@@ -186,7 +190,7 @@ void Gui::FlowfieldScreen(std::map<std::string, float>& user_values, Texture2D &
 	//if (shader_on)
 	//	BeginShaderMode(shader);
 
-	DrawTexturePro(flowfield_texture, { 0, 0, (float)flowfield_texture.width, (float)-flowfield_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
+	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });

@@ -7,7 +7,7 @@ class Gui
 private:
 public:
 
-	Texture2D flowfield_texture;
+	Texture2D preview_texture;
 
 	std::map<std::string, float> user_values;
 
@@ -67,11 +67,12 @@ public:
 	int active_menu = Menu::MAIN;
 	int active_algorithm = Algorithm::NONE;
 
-	Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float>& user_values, Texture2D& flowfield_texture);
+	Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float>& user_values);
 	void Draw();
+	void Update(const Texture2D &preview_texture);
 	void MainMenuScreen();
 	void CreateScreen();
-	void FlowfieldScreen(std::map<std::string, float> &user_values, Texture2D &flowfield_texture);
+	void FlowfieldScreen(std::map<std::string, float> &user_values);
 	void ShapesScreen();
 
 };

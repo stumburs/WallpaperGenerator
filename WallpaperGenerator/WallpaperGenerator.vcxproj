@@ -129,11 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\generator\Generator.cpp" />
     <ClCompile Include="src\Functions.cpp" />
     <ClCompile Include="src\gui\Gui.cpp" />
-    <ClCompile Include="src\style\flowfield\Flowfield.cpp" />
-    <ClCompile Include="src\style\flowfield\Particle.cpp" />
-    <ClCompile Include="src\style\shapes\Shapes.cpp" />
+    <ClCompile Include="src\generator\flowfield\Flowfield.cpp" />
+    <ClCompile Include="src\generator\flowfield\Particle.cpp" />
+    <ClCompile Include="src\generator\shapes\Shapes.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,11 +142,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\generator\Generator.h" />
     <ClInclude Include="src\gui\Gui.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
-    <ClInclude Include="src\style\flowfield\Flowfield.h" />
-    <ClInclude Include="src\style\flowfield\Particle.h" />
-    <ClInclude Include="src\style\shapes\Shapes.h" />
+    <ClInclude Include="src\generator\flowfield\Flowfield.h" />
+    <ClInclude Include="src\generator\flowfield\Particle.h" />
+    <ClInclude Include="src\generator\shapes\Shapes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

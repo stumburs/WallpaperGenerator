@@ -6,9 +6,11 @@
 #include <vector>
 #include "Functions.hpp"
 #include "PerlinNoise.hpp"
-#include "style/flowfield/Flowfield.h"
-#include "style/shapes/Shapes.h"
+#include "generator/flowfield/Flowfield.h"
+#include "generator/shapes/Shapes.h"
 #include "gui/Gui.h"
+
+#include "generator/Generator.h"
 
 const int kWindowWidth = 1600;
 const int kWindowHeight = 900;
@@ -46,52 +48,27 @@ int main()
 	SetTargetFPS(0);
 
 	// Init shader
-	Shader shader = LoadShader(0, "./include/shader/PIXELIZER.fs");
+	//Shader shader = LoadShader(0, "./include/shader/PIXELIZER.fs");
 
+	// Init generator
+	Generator generator(Generator::Generators::FLOWFIELD);
 
-	// Init algorithms
-	Flowfield f;
-	Shapes s;
 	// Init GUI
-	Gui gui(kWindowWidth, kWindowHeight, user_values, f.image.texture);
-
-	//GuiLoadStyle("include/style/gui/jungle.rgs");
-	// https://www.color-hex.com/color-palette/28549
-	//GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, 0x1e2124);
+	Gui gui(kWindowWidth, kWindowHeight, user_values);
 
 	while (!WindowShouldClose())
 	{
 		// Update
 		{
-			switch (gui.active_algorithm)
-			{
-
-			case Gui::Algorithm::NONE:
-				break;
-
-			case Gui::Algorithm::FLOWFIELD:
-				// Update flowfield
-				f.Update(active_blend_mode);
-				break;
-
-			case Gui::Algorithm::SHAPES:
-				// Update shapes
-				s.Update(active_blend_mode);
-				break;
-
-			default:
-				break;
-			}
-			
+			generator.Update();
+			gui.Update(generator.GetImage());
 		}
 
 		// Draw
 		BeginDrawing();
 		{
 			ClearBackground(RAYWHITE);
-
 			gui.Draw();
-			
 			DrawFPS(20, 20);
 		}
 		EndDrawing();

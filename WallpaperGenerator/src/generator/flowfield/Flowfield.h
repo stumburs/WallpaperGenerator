@@ -37,6 +37,7 @@ public:
 public:
 	Flowfield();
 	void Update(int active_blend_mode);
+	Texture2D GetImage();
 	void ResetImage(Color background_color);
 	void Reset(std::map<std::string, float> user_values);
 	void InitParticles();

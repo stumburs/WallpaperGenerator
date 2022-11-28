@@ -18,13 +18,13 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\style\flowfield\Particle.cpp">
+    <ClCompile Include="src\generator\flowfield\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\style\flowfield\Flowfield.cpp">
+    <ClCompile Include="src\generator\flowfield\Flowfield.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\style\shapes\Shapes.cpp">
+    <ClCompile Include="src\generator\shapes\Shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\Gui.cpp">
@@ -33,18 +33,21 @@
     <ClCompile Include="src\Functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\generator\Generator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\style\flowfield\Particle.h">
+    <ClInclude Include="src\generator\flowfield\Particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\style\flowfield\Flowfield.h">
+    <ClInclude Include="src\generator\flowfield\Flowfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\style\shapes\Shapes.h">
+    <ClInclude Include="src\generator\shapes\Shapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gui\Gui.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\PerlinNoise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\generator\Generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

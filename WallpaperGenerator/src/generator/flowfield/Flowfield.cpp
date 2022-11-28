@@ -60,6 +60,11 @@ void Flowfield::Update(int active_blend_mode)
     z += 0.06f;
 }
 
+Texture2D Flowfield::GetImage()
+{
+    return image.texture;
+}
+
 // Init / Reset image
 void Flowfield::ResetImage(Color background_color)
 {
