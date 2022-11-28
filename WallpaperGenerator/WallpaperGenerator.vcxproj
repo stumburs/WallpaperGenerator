@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\style\gui\Gui.cpp" />
     <ClCompile Include="include\style\flowfield\Flowfield.cpp" />
     <ClCompile Include="include\Functions.cpp" />
     <ClCompile Include="include\style\flowfield\Particle.cpp" />
@@ -139,6 +140,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\style\gui\Gui.h" />
     <ClInclude Include="include\style\flowfield\Flowfield.h" />
     <ClInclude Include="include\Functions.h" />
     <ClInclude Include="include\style\flowfield\Particle.h" />
