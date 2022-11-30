@@ -11,7 +11,7 @@ void Generator::Update()
 	{
 	case Generators::FLOWFIELD:
 		// Add active blend mode!!!
-		Flowfield::Update(0);
+		Flowfield::Update();
 		break;
 	case Generators::SHAPES:
 		// Add active blend mode!!!
@@ -97,6 +97,23 @@ float Generator::GetValue(std::string key)
 	case Generators::FLOWFIELD:
 		// Add active blend mode!!!
 		return Flowfield::user_values.at(key);
+		break;
+	case Generators::SHAPES:
+		// Add active blend mode!!!
+		//return Shapes::GetImage();
+		break;
+	default:
+		break;
+	}
+}
+
+void Generator::ResetToDefault()
+{
+	switch (active_generator)
+	{
+	case Generators::FLOWFIELD:
+		// Add active blend mode!!!
+		Flowfield::ResetToDefault();
 		break;
 	case Generators::SHAPES:
 		// Add active blend mode!!!

@@ -33,12 +33,15 @@ void Flowfield::InitValues()
     y_mult = user_values["y_mult"];
     z_mult = user_values["z_mult"];
     z = user_values["z"];
+    active_blend_mode = user_values["active_blend_mode"];
 
     render_width = window_width / scale + 1;
     render_height = window_height / scale + 1;
+
+    perlin.reseed(seed);
 }
 
-void Flowfield::Update(int active_blend_mode)
+void Flowfield::Update()
 {
     // Flowfield
     for (int x = 0; x < flowfield.size(); x++)
@@ -96,27 +99,7 @@ void Flowfield::ResetImage(Color background_color)
 
 void Flowfield::Reset(std::map<std::string, float> user_values)
 {
-    window_width = (int)user_values["window_width"];
-    window_height = (int)user_values["window_height"];
-    scale = (int)user_values["scale"];
-    seed = (unsigned char)user_values["seed"];
-    flowfield_strength = user_values["flowfield_strength"];
-    particle_count = (int)user_values["particle_count"];
-    particle_speed = user_values["particle_speed"];
-    particle_size = user_values["particle_size"];
-    particle_strength = (unsigned char)user_values["particle_strength"];
-    noise_height = user_values["noise_height"];
-    noise_detail = (int)user_values["noise_detail"];
-    x_mult = user_values["x_mult"];
-    y_mult = user_values["y_mult"];
-    z_mult = user_values["z_mult"];
-    z = user_values["z"];
-
-    render_width = window_width / scale + 1;
-    render_height = window_height / scale + 1;
-
-    perlin.reseed(seed);
-
+    InitValues();
     InitParticles();
     InitFlowfield();
     ResetImage(BLACK);
@@ -152,4 +135,9 @@ void Flowfield::InitFlowfield()
 std::map<std::string, float> Flowfield::GetUserValues()
 {
     return user_values;
+}
+
+void Flowfield::ResetToDefault()
+{
+    user_values = default_values;
 }

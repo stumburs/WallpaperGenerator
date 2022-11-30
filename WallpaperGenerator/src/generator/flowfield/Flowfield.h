@@ -6,10 +6,11 @@
 class Flowfield
 {
 public:
+
 	int window_width;
 	int window_height;
 
-	std::map<std::string, float> user_values = {
+	std::map<std::string, float> default_values = {
 		{ "window_width", 1920 },
 		{ "window_height", 1080 },
 		{ "scale", 20 },
@@ -23,10 +24,12 @@ public:
 		{ "noise_detail", 4},
 		{ "x_mult", 0.02f},
 		{ "y_mult", 0.02f},
-		{ "z_mult", 0.02f}
+		{ "z_mult", 0.02f},
+		{ "z", 0 },
+		{ "active_blend_mode", BlendMode::BLEND_ALPHA }
 	};
 
-	std::map<std::string, float> default_values = user_values;
+	std::map<std::string, float> user_values = default_values;
 
 	int scale;
 	int render_width;
@@ -45,7 +48,8 @@ public:
 	float x_mult;
 	float y_mult;
 	float z_mult;
-	float z = 0;
+	float z;
+	int active_blend_mode;
 
 
 	siv::PerlinNoise perlin;
@@ -56,10 +60,11 @@ public:
 public:
 	Flowfield();
 	void InitValues();
-	void Update(int active_blend_mode);
+	void Update();
 	Texture2D GetImage();
 	void ResetImage(Color background_color);
 	void Reset(std::map<std::string, float> user_values);
+	void ResetToDefault();
 	void InitParticles();
 	void InitFlowfield();
 	std::map<std::string, float> GetUserValues();

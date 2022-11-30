@@ -18,7 +18,7 @@ public:
 	Generator(int generator_type);
 	void Update();
 	void UpdateSettings();
-	//void ResetToDefault();
+	void ResetToDefault();
 	std::map<std::string, float> GetUserValues();
 	void SetValue(std::string key, float value);
 	float GetValue(std::string key);

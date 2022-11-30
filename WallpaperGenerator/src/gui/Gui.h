@@ -67,10 +67,11 @@ public:
 
 	int active_menu = Menu::MAIN;
 	int active_algorithm = Algorithm::NONE;
+	int active_blend_mode = BlendMode::BLEND_ALPHA;
 
 	Gui(int kWindowWidth, int kWindowHeight, Generator *generator);
 	void Draw();
-	void Update(const Texture2D &preview_texture);
+	void Update();
 	void MainMenuScreen();
 	void CreateScreen();
 	void FlowfieldScreen();

@@ -43,7 +43,7 @@ int main()
 		// Update
 		{
 			generator.Update();
-			gui.Update(generator.GetImage());
+			gui.Update();
 		}
 
 		// Draw

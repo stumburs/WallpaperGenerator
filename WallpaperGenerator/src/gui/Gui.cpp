@@ -79,10 +79,10 @@ void Gui::Draw()
 	}
 }
 
-void Gui::Update(const Texture2D &preview_texture)
+void Gui::Update()
 {
 	if (generator->active_generator != Generator::NONE)
-		this->preview_texture = preview_texture;
+		this->preview_texture = generator->GetImage();
 }
 
 void Gui::MainMenuScreen()
@@ -115,7 +115,7 @@ void Gui::FlowfieldScreen()
 
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
-	//active_blend_mode = GuiSliderBar(blend_slider, NULL, NULL, active_blend_mode, 0, 6);
+	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
 
 
 	/*
@@ -171,6 +171,7 @@ void Gui::FlowfieldScreen()
 
 	if (GuiLabelButton(save_image, "Save Image")) {
 		Image img = LoadImageFromTexture(generator->GetImage());
+		ImageFlipVertical(&img);
 		ExportImage(img, "image.png");
 	}
 
@@ -178,9 +179,9 @@ void Gui::FlowfieldScreen()
 		generator->UpdateSettings();
 	}
 
-	/*if (GuiLabelButton(reset_settings, "Reset settings")) {
+	if (GuiLabelButton(reset_settings, "Reset settings")) {
 		generator->ResetToDefault();
-	}*/
+	}
 
 	// Apply shader
 	//if (shader_on)
@@ -191,7 +192,7 @@ void Gui::FlowfieldScreen()
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 
-	/*switch (active_blend_mode)
+	switch ((int)generator->GetValue("active_blend_mode"))
 	{
 	case 0:
 		DrawText("BLEND_ALPHA", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA", 20) / 2, blend_slider.y + 10, 20, BLACK);
@@ -216,7 +217,7 @@ void Gui::FlowfieldScreen()
 		break;
 	default:
 		break;
-	}*/
+	}
 }
 
 void Gui::ShapesScreen()
