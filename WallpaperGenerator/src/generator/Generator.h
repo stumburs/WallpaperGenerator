@@ -8,7 +8,8 @@ public:
 
 	enum Generators
 	{
-		FLOWFIELD = 0,
+		NONE = 0,
+		FLOWFIELD,
 		SHAPES
 	};
 
@@ -16,5 +17,10 @@ public:
 
 	Generator(int generator_type);
 	void Update();
+	void UpdateSettings();
+	//void ResetToDefault();
+	std::map<std::string, float> GetUserValues();
+	void SetValue(std::string key, float value);
+	float GetValue(std::string key);
 	Texture2D GetImage();
 };

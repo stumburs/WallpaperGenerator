@@ -17,24 +17,6 @@ const int kWindowHeight = 900;
 
 bool shader_on = false;
 
-std::map<std::string, float> user_values = {
-	{ "window_width", 1600 },
-	{ "window_height", 900 },
-	{ "scale", 20 },
-	{ "seed", 69420u},
-	{ "flowfield_strength", 0.01f },
-	{ "particle_count", 10000},
-	{ "particle_speed", 1.0f },
-	{ "particle_size", 1.0f },
-	{ "particle_strength", 1u },
-	{ "noise_height", 0.0f },
-	{ "noise_detail", 4},
-	{ "x_mult", 0.02f},
-	{ "y_mult", 0.02f},
-	{ "z_mult", 0.02f}
- };
-
-std::map<std::string, float> default_values = user_values;
 
 int active_blend_mode = BlendMode::BLEND_ALPHA;
 
@@ -51,10 +33,10 @@ int main()
 	//Shader shader = LoadShader(0, "./include/shader/PIXELIZER.fs");
 
 	// Init generator
-	Generator generator(Generator::Generators::FLOWFIELD);
+	Generator generator(Generator::Generators::NONE);
 
 	// Init GUI
-	Gui gui(kWindowWidth, kWindowHeight, user_values);
+	Gui gui(kWindowWidth, kWindowHeight, &generator);
 
 	while (!WindowShouldClose())
 	{

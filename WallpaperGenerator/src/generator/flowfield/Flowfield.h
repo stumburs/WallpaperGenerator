@@ -6,27 +6,46 @@
 class Flowfield
 {
 public:
-	int window_width = 1600;
-	int window_height = 900;
+	int window_width;
+	int window_height;
 
-	int scale = 20;
+	std::map<std::string, float> user_values = {
+		{ "window_width", 1920 },
+		{ "window_height", 1080 },
+		{ "scale", 20 },
+		{ "seed", 69420u},
+		{ "flowfield_strength", 0.01f },
+		{ "particle_count", 10000},
+		{ "particle_speed", 1.0f },
+		{ "particle_size", 1.0f },
+		{ "particle_strength", 1u },
+		{ "noise_height", 0.0f },
+		{ "noise_detail", 4},
+		{ "x_mult", 0.02f},
+		{ "y_mult", 0.02f},
+		{ "z_mult", 0.02f}
+	};
+
+	std::map<std::string, float> default_values = user_values;
+
+	int scale;
 	int render_width;
 	int render_height;
 
 	siv::PerlinNoise::seed_type seed;
 
-	float flowfield_strength = 0.01f;
-	int particle_count = 10000;
-	float particle_speed = 1.0f;
-	float particle_size = 1.0f;
-	unsigned char particle_strength = 1;
+	float flowfield_strength;
+	int particle_count;
+	float particle_speed;
+	float particle_size;
+	unsigned char particle_strength;
 
-	float noise_height = 0;
-	int noise_detail = 4;
-	float x_mult = 0.02f;
-	float y_mult = 0.02f;
-	float z_mult = 0.02f;
-	float z = 0.0f;
+	float noise_height;
+	int noise_detail;
+	float x_mult;
+	float y_mult;
+	float z_mult;
+	float z = 0;
 
 
 	siv::PerlinNoise perlin;
@@ -36,11 +55,13 @@ public:
 
 public:
 	Flowfield();
+	void InitValues();
 	void Update(int active_blend_mode);
 	Texture2D GetImage();
 	void ResetImage(Color background_color);
 	void Reset(std::map<std::string, float> user_values);
 	void InitParticles();
 	void InitFlowfield();
+	std::map<std::string, float> GetUserValues();
 };
 

@@ -1,9 +1,9 @@
 #include "Gui.h"
 #include "raygui.h"
 
-Gui::Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float> &user_values)
+Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 {
-	this->user_values = user_values;
+	this->generator = generator;
 
 	this->kWindowWidth = kWindowWidth;
 	this->kWindowHeight = kWindowHeight;
@@ -64,7 +64,7 @@ void Gui::Draw()
 		case Gui::Algorithm::NONE:
 			break;
 		case Gui::Algorithm::FLOWFIELD:
-			FlowfieldScreen(user_values);
+			FlowfieldScreen();
 			break;
 		case Gui::Algorithm::SHAPES:
 			ShapesScreen();
@@ -81,7 +81,8 @@ void Gui::Draw()
 
 void Gui::Update(const Texture2D &preview_texture)
 {
-	this->preview_texture = preview_texture;
+	if (generator->active_generator != Generator::NONE)
+		this->preview_texture = preview_texture;
 }
 
 void Gui::MainMenuScreen()
@@ -99,6 +100,7 @@ void Gui::CreateScreen()
 	{
 		active_menu = Menu::GENERATOR;
 		active_algorithm = Algorithm::FLOWFIELD;
+		generator->active_generator = Generator::FLOWFIELD;
 	}
 	if (GuiButton(shapes_rect, "Shapes"))
 	{
@@ -106,7 +108,7 @@ void Gui::CreateScreen()
 		active_algorithm = Algorithm::SHAPES;
 	}
 }
-void Gui::FlowfieldScreen(std::map<std::string, float>& user_values)
+void Gui::FlowfieldScreen()
 {
 	// Preview Box
 	DrawRectangleRec(preview_rect, WHITE);
@@ -128,20 +130,20 @@ void Gui::FlowfieldScreen(std::map<std::string, float>& user_values)
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
 
 	// User values
-	user_values["window_width"] = (int)GuiSliderBar({ window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }, TextFormat("%d", (int)user_values["window_width"]), "Image Width", (int)user_values["window_width"], 1, 1920);
-	user_values["window_height"] = (int)GuiSliderBar({ window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }, TextFormat("%d", (int)user_values["window_height"]), "Image Height", (int)user_values["window_height"], 1, 1080);
-	user_values["scale"] = (int)GuiSliderBar({ scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }, TextFormat("%d", (int)user_values["scale"]), "Image Scale", (int)user_values["scale"], 1, 40);
+	generator->SetValue("window_width", (int)GuiSliderBar({ window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }, TextFormat("%d", (int)generator->GetValue("window_width")), "Image Width", (int)generator->GetValue("window_width"), 1, 1920));
+	generator->SetValue("window_height", (int)GuiSliderBar({ window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }, TextFormat("%d", (int)generator->GetValue("window_height")), "Image Height", (int)generator->GetValue("window_height"), 1, 1080));
+	generator->SetValue("scale", (int)GuiSliderBar({ scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }, TextFormat("%d", (int)generator->GetValue("scale")), "Image Scale", (int)generator->GetValue("scale"), 1, 40));
 	//GuiDrawText("(seed input)", seed_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-	user_values["flowfield_strength"] = GuiSliderBar({ flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }, TextFormat("%0.3f", user_values["flowfield_strength"]), "Flowfield Strength", user_values["flowfield_strength"], 0.001f, 0.1f);
-	user_values["particle_count"] = (int)GuiSliderBar({ particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }, TextFormat("%d", (int)user_values["particle_count"]), "Particle count", (int)user_values["particle_count"], 500, 50000);
-	user_values["particle_speed"] = GuiSliderBar({ particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }, TextFormat("%0.1f", user_values["particle_speed"]), "Particle Speed", user_values["particle_speed"], 0.0f, 2.0f);
+	generator->SetValue("flowfield_strength", GuiSliderBar({ flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }, TextFormat("%0.3f", generator->GetValue("flowfield_strength")), "Flowfield Strength", generator->GetValue("flowfield_strength"), 0.001f, 0.1f));
+	generator->SetValue("particle_count", (int)GuiSliderBar({ particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }, TextFormat("%d", (int)generator->GetValue("particle_count")), "Particle count", (int)generator->GetValue("particle_count"), 500, 50000));
+	generator->SetValue("particle_speed", GuiSliderBar({ particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }, TextFormat("%0.1f", generator->GetValue("particle_speed")), "Particle Speed", generator->GetValue("particle_speed"), 0.0f, 2.0f));
 	//GuiDrawText("(particle size input)", particle_size_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-	user_values["particle_strength"] = (unsigned char)GuiSliderBar({ particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }, TextFormat("%d", (unsigned char)user_values["particle_strength"]), "Particle Strength", (unsigned char)user_values["particle_strength"], 1, 16);
+	generator->SetValue("particle_strength", (unsigned char)GuiSliderBar({ particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }, TextFormat("%d", (unsigned char)generator->GetValue("particle_strength")), "Particle Strength", (unsigned char)generator->GetValue("particle_strength"), 1, 16));
 	//GuiDrawText("(noise height input)", noise_height_rect, GuiTextAlignment::TEXT_ALIGN_CENTER, BLACK);
-	user_values["noise_detail"] = (int)GuiSliderBar({ noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }, TextFormat("%d", (int)user_values["noise_detail"]), "Noise Detail", (int)user_values["noise_detail"], 1, 16);
-	user_values["x_mult"] = GuiSliderBar({ x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }, TextFormat("%0.2f", user_values["x_mult"]), "X-Axis Multiplier", user_values["x_mult"], 0.01f, 0.2f);
-	user_values["y_mult"] = GuiSliderBar({ y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }, TextFormat("%0.2f", user_values["y_mult"]), "Y-Axis Multiplier", user_values["y_mult"], 0.01f, 0.2f);
-	user_values["z_mult"] = GuiSliderBar({ z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }, TextFormat("%0.2f", user_values["z_mult"]), "Z-Axis Multiplier", user_values["z_mult"], 0.01f, 0.2f);
+	generator->SetValue("noise_detail", (int)GuiSliderBar({ noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }, TextFormat("%d", (int)generator->GetValue("noise_detail")), "Noise Detail", (int)generator->GetValue("noise_detail"), 1, 16));
+	generator->SetValue("x_mult", GuiSliderBar({ x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("x_mult")), "X-Axis Multiplier", generator->GetValue("x_mult"), 0.01f, 0.2f));
+	generator->SetValue("y_mult", GuiSliderBar({ y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("y_mult")), "Y-Axis Multiplier", generator->GetValue("y_mult"), 0.01f, 0.2f));
+	generator->SetValue("z_mult", GuiSliderBar({ z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("z_mult")), "Z-Axis Multiplier", generator->GetValue("z_mult"), 0.01f, 0.2f));
 	if (CheckCollisionPointRec(GetMousePosition(), { window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }))
 		DrawText("Final image horizontal resolution", GetMousePosition().x, GetMousePosition().y - 30, 20, DARKGRAY);
 	if (CheckCollisionPointRec(GetMousePosition(), { window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }))
@@ -167,24 +169,18 @@ void Gui::FlowfieldScreen(std::map<std::string, float>& user_values)
 
 	EndScissorMode();
 
-	if (GuiLabelButton(reset_image, "Reset flowfield"))
-	{
-		//f.ResetImage(BLACK);
-	}
-
 	if (GuiLabelButton(save_image, "Save Image")) {
-		//Image img = LoadImageFromTexture(f.image.texture);
-		//ExportImage(img, "text.png");
+		Image img = LoadImageFromTexture(generator->GetImage());
+		ExportImage(img, "image.png");
 	}
 
 	if (GuiLabelButton(update_settings, "Update settings")) {
-		//f.Reset(user_values);
+		generator->UpdateSettings();
 	}
 
-	if (GuiLabelButton(reset_settings, "Reset settings")) {
-		//user_values = default_values;
-		//f.Reset(user_values);
-	}
+	/*if (GuiLabelButton(reset_settings, "Reset settings")) {
+		generator->ResetToDefault();
+	}*/
 
 	// Apply shader
 	//if (shader_on)

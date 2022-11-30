@@ -3,11 +3,8 @@
 #include "../../Functions.h"
 Flowfield::Flowfield()
 {
-	render_width = window_width / scale + 1;
-	render_height = window_height / scale + 1;
+    InitValues();
 
-    // Perlin noise setup
-    seed = 69420u;
     perlin.reseed(seed);
 
     InitParticles();
@@ -17,6 +14,28 @@ Flowfield::Flowfield()
 
     // Reset / Init Texture
     ResetImage(BLACK);
+}
+
+void Flowfield::InitValues()
+{
+    window_width = (int)user_values["window_width"];
+    window_height = (int)user_values["window_height"];
+    scale = (int)user_values["scale"];
+    seed = (unsigned char)user_values["seed"];
+    flowfield_strength = user_values["flowfield_strength"];
+    particle_count = (int)user_values["particle_count"];
+    particle_speed = user_values["particle_speed"];
+    particle_size = user_values["particle_size"];
+    particle_strength = (unsigned char)user_values["particle_strength"];
+    noise_height = user_values["noise_height"];
+    noise_detail = (int)user_values["noise_detail"];
+    x_mult = user_values["x_mult"];
+    y_mult = user_values["y_mult"];
+    z_mult = user_values["z_mult"];
+    z = user_values["z"];
+
+    render_width = window_width / scale + 1;
+    render_height = window_height / scale + 1;
 }
 
 void Flowfield::Update(int active_blend_mode)
@@ -128,4 +147,9 @@ void Flowfield::InitFlowfield()
             flowfield[x].push_back(vec);
         }
     }
+}
+
+std::map<std::string, float> Flowfield::GetUserValues()
+{
+    return user_values;
 }

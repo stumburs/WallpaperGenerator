@@ -2,14 +2,15 @@
 #include <raylib.h>
 #include <map>
 #include <string>
+#include "../generator/Generator.h"
 class Gui
 {
 private:
 public:
 
-	Texture2D preview_texture;
+	Texture2D preview_texture{};
 
-	std::map<std::string, float> user_values;
+	Generator* generator;
 
 	int kWindowWidth;
 	int kWindowHeight;
@@ -67,12 +68,12 @@ public:
 	int active_menu = Menu::MAIN;
 	int active_algorithm = Algorithm::NONE;
 
-	Gui(int kWindowWidth, int kWindowHeight, std::map<std::string, float>& user_values);
+	Gui(int kWindowWidth, int kWindowHeight, Generator *generator);
 	void Draw();
 	void Update(const Texture2D &preview_texture);
 	void MainMenuScreen();
 	void CreateScreen();
-	void FlowfieldScreen(std::map<std::string, float> &user_values);
+	void FlowfieldScreen();
 	void ShapesScreen();
 
 };

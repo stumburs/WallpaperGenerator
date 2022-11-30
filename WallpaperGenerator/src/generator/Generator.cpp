@@ -38,3 +38,71 @@ Texture2D Generator::GetImage()
 		break;
 	}
 }
+
+void Generator::UpdateSettings()
+{
+	switch (active_generator)
+	{
+	case Generators::FLOWFIELD:
+		// Add active blend mode!!!
+		Flowfield::Reset(Flowfield::user_values);
+		break;
+	case Generators::SHAPES:
+		// Add active blend mode!!!
+		//return Shapes::GetImage();
+		break;
+	default:
+		break;
+	}
+}
+
+std::map<std::string, float> Generator::GetUserValues()
+{
+	switch (active_generator)
+	{
+	case Generators::FLOWFIELD:
+		// Add active blend mode!!!
+		return Flowfield::GetUserValues();
+		break;
+	case Generators::SHAPES:
+		// Add active blend mode!!!
+		//return Shapes::GetImage();
+		break;
+	default:
+		break;
+	}
+}
+
+void Generator::SetValue(std::string key, float value)
+{
+	switch (active_generator)
+	{
+	case Generators::FLOWFIELD:
+		// Add active blend mode!!!
+		Flowfield::user_values.at(key) = value;
+		break;
+	case Generators::SHAPES:
+		// Add active blend mode!!!
+		//return Shapes::GetImage();
+		break;
+	default:
+		break;
+	}
+}
+
+float Generator::GetValue(std::string key)
+{
+	switch (active_generator)
+	{
+	case Generators::FLOWFIELD:
+		// Add active blend mode!!!
+		return Flowfield::user_values.at(key);
+		break;
+	case Generators::SHAPES:
+		// Add active blend mode!!!
+		//return Shapes::GetImage();
+		break;
+	default:
+		break;
+	}
+}
