@@ -63,8 +63,7 @@ public:
 	void Update();
 	Texture2D GetImage();
 	void ResetImage(Color background_color);
-	void Reset(std::map<std::string, float> user_values);
-	void ResetToDefault();
+	void Reset();
 	void InitParticles();
 	void InitFlowfield();
 	std::map<std::string, float> GetUserValues();

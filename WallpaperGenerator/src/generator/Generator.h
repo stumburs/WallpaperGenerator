@@ -10,7 +10,8 @@ public:
 	{
 		NONE = 0,
 		FLOWFIELD,
-		SHAPES
+		SHAPES,
+		AMOUNT = SHAPES
 	};
 
 	int active_generator;

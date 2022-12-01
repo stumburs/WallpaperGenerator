@@ -90,6 +90,7 @@ Texture2D Flowfield::GetImage()
 // Init / Reset image
 void Flowfield::ResetImage(Color background_color)
 {
+    UnloadRenderTexture(image);
     image = LoadRenderTexture(window_width, window_height);
     BeginTextureMode(image);
     ClearBackground(background_color);
@@ -97,7 +98,7 @@ void Flowfield::ResetImage(Color background_color)
     z = noise_height;
 }
 
-void Flowfield::Reset(std::map<std::string, float> user_values)
+void Flowfield::Reset()
 {
     InitValues();
     InitParticles();
@@ -135,9 +136,4 @@ void Flowfield::InitFlowfield()
 std::map<std::string, float> Flowfield::GetUserValues()
 {
     return user_values;
-}
-
-void Flowfield::ResetToDefault()
-{
-    user_values = default_values;
 }

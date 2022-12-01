@@ -58,15 +58,8 @@ public:
 		GENERATOR
 	};
 
-	enum Algorithm
-	{
-		NONE = 0,
-		FLOWFIELD,
-		SHAPES
-	};
-
 	int active_menu = Menu::MAIN;
-	int active_algorithm = Algorithm::NONE;
+	int active_algorithm = Generator::Generators::NONE;
 	int active_blend_mode = BlendMode::BLEND_ALPHA;
 
 	Gui(int kWindowWidth, int kWindowHeight, Generator *generator);
