@@ -26,21 +26,21 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 	update_settings = { (float)kWindowWidth - 850, 645, 40, 40 };
 	reset_settings = { (float)kWindowWidth - 650, 645, 40, 40 };
 
-	window_width_rect = { 60, 40, 400, 40 };
-	window_height_rect = { 60, 100, 400, 40 };
-	scale_rect = { 60, 160, 400, 40 };
-	seed_rect = { 60, 220, 400, 40 };
-	flowfield_strength_rect = { 60, 280, 400, 40 };
-	particle_count_rect = { 60, 340, 400, 40 };
-	particle_speed_rect = { 60, 400, 400, 40 };
-	particle_size_rect = { 60, 460, 400, 40 };
-	particle_strength_rect = { 60, 520, 400, 40 };
-	noise_height_rect = { 60, 580, 400, 40 };
-	noise_detail_rect = { 60, 640, 400, 40 };
-	x_mult_rect = { 60, 700, 400, 40 };
-	y_mult_rect = { 60, 760, 400, 40 };
-	z_mult_rect = { 60, 820, 400, 40 };
-	z_rect = { 60, 880, 400, 40 };
+	//window_width_rect = { 60, 40, 400, 40 };
+	//window_height_rect = { 60, 100, 400, 40 };
+	//scale_rect = { 60, 160, 400, 40 };
+	////seed_rect = { 60, 220, 400, 40 };
+	//flowfield_strength_rect = { 60, 280, 400, 40 };
+	//particle_count_rect = { 60, 340, 400, 40 };
+	//particle_speed_rect = { 60, 400, 400, 40 };
+	////particle_size_rect = { 60, 460, 400, 40 };
+	//particle_strength_rect = { 60, 520, 400, 40 };
+	////noise_height_rect = { 60, 580, 400, 40 };
+	//noise_detail_rect = { 60, 640, 400, 40 };
+	//x_mult_rect = { 60, 700, 400, 40 };
+	//y_mult_rect = { 60, 760, 400, 40 };
+	//z_mult_rect = { 60, 820, 400, 40 };
+	////z_rect = { 60, 880, 400, 40 };
 
 	scroll_pos = { 0 };
 
@@ -116,71 +116,52 @@ void Gui::FlowfieldScreen()
 
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
-
-
-	/*
-	*  !!!!!!!!!!!!!!!
-	*
-	*	REFACTOR ASAP
-	*
-	*  !!!!!!!!!!!!!!!
-	*/
 	Vector2 mouse_pos = GetMousePosition();
 	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
 
 	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 1000 }, &scroll_pos);
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
 
+	// Apply scrollpos
+	std::copy(std::begin(flowfield_setting_rects), std::end(flowfield_setting_rects), std::begin(flowfield_setting_rects_and_scroll_pos));
+	for (Rectangle& rect : flowfield_setting_rects_and_scroll_pos)
+		rect.y += scroll_pos.y;
 
-	generator->SetValue("window_width", (int)GuiSliderBar({ window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }, TextFormat("%d", (int)generator->GetValue("window_width")), "Image Width", (int)generator->GetValue("window_width"), 1, 1920));
-	generator->SetValue("window_height", (int)GuiSliderBar({ window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }, TextFormat("%d", (int)generator->GetValue("window_height")), "Image Height", (int)generator->GetValue("window_height"), 1, 1080));
-	generator->SetValue("scale", (int)GuiSliderBar({ scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }, TextFormat("%d", (int)generator->GetValue("scale")), "Image Scale", (int)generator->GetValue("scale"), 1, 40));
-	generator->SetValue("flowfield_strength", GuiSliderBar({ flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }, TextFormat("%0.3f", generator->GetValue("flowfield_strength")), "Flowfield Strength", generator->GetValue("flowfield_strength"), 0.001f, 0.1f));
-	generator->SetValue("particle_count", (int)GuiSliderBar({ particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }, TextFormat("%d", (int)generator->GetValue("particle_count")), "Particle count", (int)generator->GetValue("particle_count"), 500, 50000));
-	generator->SetValue("particle_speed", GuiSliderBar({ particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }, TextFormat("%0.1f", generator->GetValue("particle_speed")), "Particle Speed", generator->GetValue("particle_speed"), 0.0f, 2.0f));
-	generator->SetValue("particle_strength", (unsigned char)GuiSliderBar({ particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }, TextFormat("%d", (unsigned char)generator->GetValue("particle_strength")), "Particle Strength", (unsigned char)generator->GetValue("particle_strength"), 1, 16));
-	generator->SetValue("noise_detail", (int)GuiSliderBar({ noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }, TextFormat("%d", (int)generator->GetValue("noise_detail")), "Noise Detail", (int)generator->GetValue("noise_detail"), 1, 16));
-	generator->SetValue("x_mult", GuiSliderBar({ x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("x_mult")), "X-Axis Multiplier", generator->GetValue("x_mult"), 0.01f, 0.2f));
-	generator->SetValue("y_mult", GuiSliderBar({ y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("y_mult")), "Y-Axis Multiplier", generator->GetValue("y_mult"), 0.01f, 0.2f));
-	generator->SetValue("z_mult", GuiSliderBar({ z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }, TextFormat("%0.2f", generator->GetValue("z_mult")), "Z-Axis Multiplier", generator->GetValue("z_mult"), 0.01f, 0.2f));
-	if (CheckCollisionPointRec(mouse_pos, { window_width_rect.x + 50, window_width_rect.y + 50 + scroll_pos.y, window_width_rect.width, window_width_rect.height }))
-		DrawText("Final image horizontal resolution", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { window_height_rect.x + 50, window_height_rect.y + 50 + scroll_pos.y, window_height_rect.width, window_height_rect.height }))
-		DrawText("Final image horizontal resolution", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { scale_rect.x + 50, scale_rect.y + 50 + scroll_pos.y, scale_rect.width, scale_rect.height }))
-		DrawText("Lower number = more detail, but worse performance", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { flowfield_strength_rect.x + 50, flowfield_strength_rect.y + 50 + scroll_pos.y, flowfield_strength_rect.width, flowfield_strength_rect.height }))
-		DrawText("How accurately particles follow the flowfield", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { particle_count_rect.x + 50, particle_count_rect.y + 50 + scroll_pos.y, particle_count_rect.width, particle_count_rect.height }))
-		DrawText("Amount of particles", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { particle_speed_rect.x + 50, particle_speed_rect.y + 50 + scroll_pos.y, particle_speed_rect.width, particle_speed_rect.height }))
-		DrawText("How quickly particles move", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { particle_strength_rect.x + 50, particle_strength_rect.y + 50 + scroll_pos.y, particle_strength_rect.width, particle_strength_rect.height }))
-		DrawText("Particle color intensity", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { noise_detail_rect.x + 50, noise_detail_rect.y + 50 + scroll_pos.y, noise_detail_rect.width, noise_detail_rect.height }))
-		DrawText("Perlin noise octaves. Higher number = worse performance", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { x_mult_rect.x + 50, x_mult_rect.y + 50 + scroll_pos.y, x_mult_rect.width, x_mult_rect.height }))
-		DrawText("Noise x-axis multiplier", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { y_mult_rect.x + 50, y_mult_rect.y + 50 + scroll_pos.y, y_mult_rect.width, y_mult_rect.height }))
-		DrawText("Noise y-axis multiplier", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-	if (CheckCollisionPointRec(mouse_pos, { z_mult_rect.x + 50, z_mult_rect.y + 50 + scroll_pos.y, z_mult_rect.width, z_mult_rect.height }))
-		DrawText("Noise z-axis multiplier", mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
+	// Render and get values from sliders
+	generator->SetValue("window_width", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[0], TextFormat("%d", (int)generator->GetValue("window_width")), "Image Width", (int)generator->GetValue("window_width"), 1, 1920));
+	generator->SetValue("window_height", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[1], TextFormat("%d", (int)generator->GetValue("window_height")), "Image Height", (int)generator->GetValue("window_height"), 1, 1080));
+	generator->SetValue("scale", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[2], TextFormat("%d", (int)generator->GetValue("scale")), "Image Scale", (int)generator->GetValue("scale"), 1, 40));
+	generator->SetValue("flowfield_strength", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[3], TextFormat("%0.3f", generator->GetValue("flowfield_strength")), "Flowfield Strength", generator->GetValue("flowfield_strength"), 0.001f, 0.1f));
+	generator->SetValue("particle_count", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[4], TextFormat("%d", (int)generator->GetValue("particle_count")), "Particle count", (int)generator->GetValue("particle_count"), 500, 50000));
+	generator->SetValue("particle_speed", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[5], TextFormat("%0.1f", generator->GetValue("particle_speed")), "Particle Speed", generator->GetValue("particle_speed"), 0.0f, 2.0f));
+	generator->SetValue("particle_strength", (unsigned char)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[6], TextFormat("%d", (unsigned char)generator->GetValue("particle_strength")), "Particle Strength", (unsigned char)generator->GetValue("particle_strength"), 1, 16));
+	generator->SetValue("noise_detail", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[7], TextFormat("%d", (int)generator->GetValue("noise_detail")), "Noise Detail", (int)generator->GetValue("noise_detail"), 1, 16));
+	generator->SetValue("x_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[8], TextFormat("%0.2f", generator->GetValue("x_mult")), "X-Axis Multiplier", generator->GetValue("x_mult"), 0.01f, 0.2f));
+	generator->SetValue("y_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[9], TextFormat("%0.2f", generator->GetValue("y_mult")), "Y-Axis Multiplier", generator->GetValue("y_mult"), 0.01f, 0.2f));
+	generator->SetValue("z_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[10], TextFormat("%0.2f", generator->GetValue("z_mult")), "Z-Axis Multiplier", generator->GetValue("z_mult"), 0.01f, 0.2f));
+	
+	// Display tooltips
+	for (int i = 0; i < flowfield_tooltips.size(); i++)
+	{
+		Rectangle rect = { flowfield_setting_rects[i].x, flowfield_setting_rects[i].y + scroll_pos.y, flowfield_setting_rects[i].width, flowfield_setting_rects[i].height };
+		if (CheckCollisionPointRec(mouse_pos, rect))
+			DrawText(flowfield_tooltips[i].c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
+	}
 
 	EndScissorMode();
 
-	if (GuiLabelButton(save_image, "Save Image")) {
+	if (GuiLabelButton(save_image, "Save Image"))
+	{
 		Image img = LoadImageFromTexture(generator->GetImage());
 		ImageFlipVertical(&img);
 		ExportImage(img, "image.png");
 	}
 
-	if (GuiLabelButton(update_settings, "Update settings")) {
+	if (GuiLabelButton(update_settings, "Update settings"))
 		generator->UpdateSettings();
-	}
 
-	if (GuiLabelButton(reset_settings, "Reset settings")) {
+	if (GuiLabelButton(reset_settings, "Reset settings"))
 		generator->ResetToDefault();
-	}
 
 	// Apply shader
 	//if (shader_on)
@@ -191,6 +172,7 @@ void Gui::FlowfieldScreen()
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 
+	// Blend slider text
 	switch ((int)generator->GetValue("active_blend_mode"))
 	{
 	case 0:

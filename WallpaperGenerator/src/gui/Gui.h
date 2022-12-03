@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <map>
+#include <array>
 #include <string>
 #include "../generator/Generator.h"
 class Gui
@@ -56,6 +57,50 @@ public:
 		MAIN = 0,
 		CREATE,
 		GENERATOR
+	};
+
+	std::array<std::string, 11> flowfield_tooltips = {
+		"Final image horizontal resolution",
+		"Final image vertical resolution",
+		"Lower number = more detail, but worse performance",
+		"How accurately particles follow the flowfield",
+		"Amount of particles",
+		"How quickly particles move",
+		"Particle color intensity",
+		"Perlin noise octaves. Higher number = worse performance",
+		"Noise x-axis multiplier",
+		"Noise y-axis multiplier",
+		"Noise z-axis multiplier"
+	};
+
+	Rectangle flowfield_setting_rects[11] = {
+		{ 60 + 50, 40 + 50, 400, 40 },
+		{ 60 + 50, 100 + 50, 400, 40 },
+		{ 60 + 50, 160 + 50, 400, 40 },
+		{ 60 + 50, 280 + 50, 400, 40 },
+		{ 60 + 50, 340 + 50, 400, 40 },
+		{ 60 + 50, 400 + 50, 400, 40 },
+		{ 60 + 50, 520 + 50, 400, 40 },
+		{ 60 + 50, 640 + 50, 400, 40 },
+		{ 60 + 50, 700 + 50, 400, 40 },
+		{ 60 + 50, 760 + 50, 400, 40 },
+		{ 60 + 50, 820 + 50, 400, 40 }
+	};
+
+	Rectangle flowfield_setting_rects_and_scroll_pos[11] = { 0 };
+
+	std::array<std::string, 11> flowfield_values = {
+		"window_width",
+		"window_height",
+		"scale",
+		"flowfield_strength",
+		"particle_count",
+		"particle_speed",
+		"particle_strength",
+		"noise_detail",
+		"x_mult",
+		"y_mult",
+		"z_mult",
 	};
 
 	int active_menu = Menu::MAIN;

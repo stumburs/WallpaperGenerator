@@ -65,7 +65,7 @@ void Flowfield::Update()
     // Draw to texture
     BeginTextureMode(image);
     {
-        BeginBlendMode(active_blend_mode);
+        //BeginBlendMode(active_blend_mode);
         // Draw Particles
         for (int i = 0; i < particles.size(); i++)
         {
@@ -74,7 +74,7 @@ void Flowfield::Update()
                                         (unsigned char)Map(particles[i].pos.y, 0, window_height, 0, 255),
                                         particle_strength });
         }
-        EndBlendMode();
+        //EndBlendMode();
     }
     EndTextureMode();
 
