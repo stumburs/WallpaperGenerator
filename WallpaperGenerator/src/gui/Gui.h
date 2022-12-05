@@ -9,6 +9,9 @@ class Gui
 private:
 public:
 
+	const std::string version_number = "0.2-alpha";
+	std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
+
 	Texture2D preview_texture{};
 
 	Generator* generator;
@@ -19,6 +22,7 @@ public:
 	// Main menu
 	Rectangle create_rect;
 	Rectangle view_rect;
+	Rectangle github_link_rect;
 
 	// Create menu
 	Rectangle flowfield_rect;
@@ -73,7 +77,7 @@ public:
 		"Noise z-axis multiplier"
 	};
 
-	Rectangle flowfield_setting_rects[11] = {
+	std::array<Rectangle, 11> flowfield_setting_rects = { {
 		{ 60 + 50, 40 + 50, 400, 40 },
 		{ 60 + 50, 100 + 50, 400, 40 },
 		{ 60 + 50, 160 + 50, 400, 40 },
@@ -85,9 +89,9 @@ public:
 		{ 60 + 50, 700 + 50, 400, 40 },
 		{ 60 + 50, 760 + 50, 400, 40 },
 		{ 60 + 50, 820 + 50, 400, 40 }
-	};
+	} };
 
-	Rectangle flowfield_setting_rects_and_scroll_pos[11] = { 0 };
+	std::array<Rectangle, 11> flowfield_setting_rects_and_scroll_pos = flowfield_setting_rects;
 
 	std::array<std::string, 11> flowfield_values = {
 		"window_width",
@@ -105,7 +109,7 @@ public:
 
 	int active_menu = Menu::MAIN;
 	int active_algorithm = Generator::Generators::NONE;
-	int active_blend_mode = BlendMode::BLEND_ALPHA;
+	int active_blend_mode;
 
 	Gui(int kWindowWidth, int kWindowHeight, Generator *generator);
 	void Draw();

@@ -26,7 +26,7 @@ public:
 		{ "y_mult", 0.02f},
 		{ "z_mult", 0.02f},
 		{ "z", 0 },
-		{ "active_blend_mode", BlendMode::BLEND_ALPHA }
+		{ "active_blend_mode", BlendMode::BLEND_ALPHA_PREMULTIPLY }
 	};
 
 	std::map<std::string, float> user_values = default_values;
@@ -56,13 +56,14 @@ public:
 	std::vector<std::vector<Vector2>> flowfield;
 	std::vector<Particle> particles;
 	RenderTexture2D image;
+	RenderTexture2D return_image;
 
 public:
 	Flowfield();
 	void InitValues();
 	void Update();
 	Texture2D GetImage();
-	void ResetImage(Color background_color);
+	void ResetImage();
 	void Reset();
 	void InitParticles();
 	void InitFlowfield();

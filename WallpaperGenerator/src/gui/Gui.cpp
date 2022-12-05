@@ -12,6 +12,7 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 	// Main menu
 	create_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
 	view_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
+	github_link_rect = { (float)kWindowWidth - 220, (float)kWindowHeight - 50 , 100, 40 };
 
 	// Create menu
 	flowfield_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
@@ -25,22 +26,6 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 	reset_image = { (float)kWindowWidth - 650, 585, 40, 40 };
 	update_settings = { (float)kWindowWidth - 850, 645, 40, 40 };
 	reset_settings = { (float)kWindowWidth - 650, 645, 40, 40 };
-
-	//window_width_rect = { 60, 40, 400, 40 };
-	//window_height_rect = { 60, 100, 400, 40 };
-	//scale_rect = { 60, 160, 400, 40 };
-	////seed_rect = { 60, 220, 400, 40 };
-	//flowfield_strength_rect = { 60, 280, 400, 40 };
-	//particle_count_rect = { 60, 340, 400, 40 };
-	//particle_speed_rect = { 60, 400, 400, 40 };
-	////particle_size_rect = { 60, 460, 400, 40 };
-	//particle_strength_rect = { 60, 520, 400, 40 };
-	////noise_height_rect = { 60, 580, 400, 40 };
-	//noise_detail_rect = { 60, 640, 400, 40 };
-	//x_mult_rect = { 60, 700, 400, 40 };
-	//y_mult_rect = { 60, 760, 400, 40 };
-	//z_mult_rect = { 60, 820, 400, 40 };
-	////z_rect = { 60, 880, 400, 40 };
 
 	scroll_pos = { 0 };
 
@@ -93,6 +78,14 @@ void Gui::MainMenuScreen()
 		active_menu = Menu::CREATE;
 	}
 	GuiButton(view_rect, "View");
+
+	DrawText(version_number.c_str(), kWindowWidth - MeasureText(version_number.c_str(), 20) - 20, kWindowHeight - 40, 20, BLACK);
+
+	if (GuiButton(github_link_rect, "GitHub"))
+	{
+		// Current solution causes heap corruption for unknown reasons.
+		OpenURL(github_url.c_str());
+	}
 }
 
 void Gui::CreateScreen()
@@ -111,8 +104,7 @@ void Gui::CreateScreen()
 }
 void Gui::FlowfieldScreen()
 {
-	// Preview Box
-	DrawRectangleRec(preview_rect, WHITE);
+	
 
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
@@ -166,6 +158,9 @@ void Gui::FlowfieldScreen()
 	// Apply shader
 	//if (shader_on)
 	//	BeginShaderMode(shader);
+
+	// Preview Box
+	//DrawRectangleRec(preview_rect, BLANK);
 
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();

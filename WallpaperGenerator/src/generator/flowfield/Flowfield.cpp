@@ -13,7 +13,7 @@ Flowfield::Flowfield()
     InitFlowfield();
 
     // Reset / Init Texture
-    ResetImage(BLACK);
+    ResetImage();
 }
 
 void Flowfield::InitValues()
@@ -65,16 +65,20 @@ void Flowfield::Update()
     // Draw to texture
     BeginTextureMode(image);
     {
-        //BeginBlendMode(active_blend_mode);
         // Draw Particles
         for (int i = 0; i < particles.size(); i++)
         {
-            particles[i].DrawPixel({ 255,
+            /*particles[i].DrawPixel({ 255,
                                         (unsigned char)Map(particles[i].pos.x, 0, window_width, 0, 255),
                                         (unsigned char)Map(particles[i].pos.y, 0, window_height, 0, 255),
-                                        particle_strength });
+                                        particle_strength });*/
+            particles[i].DrawPixel({
+                (unsigned char)Map(particles[i].pos.y, 0, window_height, 255, 128),
+                0,
+                (unsigned char)Map(particles[i].pos.y, 0, window_height , 128, 255),
+                particle_strength });
+
         }
-        //EndBlendMode();
     }
     EndTextureMode();
 
@@ -84,16 +88,24 @@ void Flowfield::Update()
 
 Texture2D Flowfield::GetImage()
 {
-    return image.texture;
+    BeginTextureMode(return_image);
+    ClearBackground(BLACK);
+    BeginBlendMode(active_blend_mode);
+    DrawTexturePro(image.texture, { 0, 0, (float)image.texture.width, (float)image.texture.height }, { 0, 0, (float)return_image.texture.width, (float)return_image.texture.height }, { 0, 0 }, 0.0f, WHITE);
+    EndBlendMode();
+    EndTextureMode();
+    return return_image.texture;
 }
 
 // Init / Reset image
-void Flowfield::ResetImage(Color background_color)
+void Flowfield::ResetImage()
 {
     UnloadRenderTexture(image);
+    UnloadRenderTexture(return_image);
     image = LoadRenderTexture(window_width, window_height);
+    return_image = LoadRenderTexture(window_width, window_height);
     BeginTextureMode(image);
-    ClearBackground(background_color);
+    ClearBackground(BLANK);
     EndTextureMode();
     z = noise_height;
 }
@@ -103,7 +115,7 @@ void Flowfield::Reset()
     InitValues();
     InitParticles();
     InitFlowfield();
-    ResetImage(BLACK);
+    ResetImage();
 }
 
 void Flowfield::InitParticles() {
