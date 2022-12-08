@@ -55,7 +55,6 @@ std::map<std::string, float> Generator::GetUserValues()
 	switch (active_generator)
 	{
 	case Generators::FLOWFIELD:
-		// Add active blend mode!!!
 		return Flowfield::GetUserValues();
 		break;
 	case Generators::SHAPES:

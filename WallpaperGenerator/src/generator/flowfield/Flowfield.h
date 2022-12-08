@@ -18,14 +18,11 @@ public:
 		{ "flowfield_strength", 0.01f },
 		{ "particle_count", 10000},
 		{ "particle_speed", 1.0f },
-		{ "particle_size", 1.0f },
 		{ "particle_strength", 1u },
-		{ "noise_height", 0.0f },
 		{ "noise_detail", 4},
 		{ "x_mult", 0.02f},
 		{ "y_mult", 0.02f},
 		{ "z_mult", 0.02f},
-		{ "z", 0 },
 		{ "active_blend_mode", BlendMode::BLEND_ALPHA_PREMULTIPLY }
 	};
 

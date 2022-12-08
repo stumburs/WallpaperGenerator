@@ -14,7 +14,7 @@ int main()
 	// Init window
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
-	SetTargetFPS(0);
+	SetTargetFPS(60);
 
 	// Init generator
 	Generator generator(Generator::Generators::NONE);

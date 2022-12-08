@@ -93,8 +93,8 @@ void Gui::CreateScreen()
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
-		//active_algorithm = Generator::Generators::FLOWFIELD;
 		generator->active_generator = Generator::FLOWFIELD;
+		SetTargetFPS(0);
 	}
 	if (GuiButton(shapes_rect, "Shapes"))
 	{
@@ -104,11 +104,10 @@ void Gui::CreateScreen()
 }
 void Gui::FlowfieldScreen()
 {
-	
-
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
 	Vector2 mouse_pos = GetMousePosition();
+
 	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
 
 	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 1000 }, &scroll_pos);
@@ -120,18 +119,22 @@ void Gui::FlowfieldScreen()
 		rect.y += scroll_pos.y;
 
 	// Render and get values from sliders
-	generator->SetValue("window_width", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[0], TextFormat("%d", (int)generator->GetValue("window_width")), "Image Width", (int)generator->GetValue("window_width"), 1, 1920));
-	generator->SetValue("window_height", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[1], TextFormat("%d", (int)generator->GetValue("window_height")), "Image Height", (int)generator->GetValue("window_height"), 1, 1080));
-	generator->SetValue("scale", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[2], TextFormat("%d", (int)generator->GetValue("scale")), "Image Scale", (int)generator->GetValue("scale"), 1, 40));
-	generator->SetValue("flowfield_strength", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[3], TextFormat("%0.3f", generator->GetValue("flowfield_strength")), "Flowfield Strength", generator->GetValue("flowfield_strength"), 0.001f, 0.1f));
-	generator->SetValue("particle_count", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[4], TextFormat("%d", (int)generator->GetValue("particle_count")), "Particle count", (int)generator->GetValue("particle_count"), 500, 50000));
-	generator->SetValue("particle_speed", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[5], TextFormat("%0.1f", generator->GetValue("particle_speed")), "Particle Speed", generator->GetValue("particle_speed"), 0.0f, 2.0f));
-	generator->SetValue("particle_strength", (unsigned char)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[6], TextFormat("%d", (unsigned char)generator->GetValue("particle_strength")), "Particle Strength", (unsigned char)generator->GetValue("particle_strength"), 1, 16));
-	generator->SetValue("noise_detail", (int)GuiSliderBar(flowfield_setting_rects_and_scroll_pos[7], TextFormat("%d", (int)generator->GetValue("noise_detail")), "Noise Detail", (int)generator->GetValue("noise_detail"), 1, 16));
-	generator->SetValue("x_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[8], TextFormat("%0.2f", generator->GetValue("x_mult")), "X-Axis Multiplier", generator->GetValue("x_mult"), 0.01f, 0.2f));
-	generator->SetValue("y_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[9], TextFormat("%0.2f", generator->GetValue("y_mult")), "Y-Axis Multiplier", generator->GetValue("y_mult"), 0.01f, 0.2f));
-	generator->SetValue("z_mult", GuiSliderBar(flowfield_setting_rects_and_scroll_pos[10], TextFormat("%0.2f", generator->GetValue("z_mult")), "Z-Axis Multiplier", generator->GetValue("z_mult"), 0.01f, 0.2f));
-	
+	int index = 0;
+	for (const auto& key : flowfield_settings_keys)
+	{
+		float value = GuiSliderBar(
+			flowfield_setting_rects_and_scroll_pos[index],
+			TextFormat("%0.*f", flowfield_settings_precision[key], generator->GetValue(key)),
+			key.c_str(),
+			generator->GetValue(key),
+			flowfield_settings_ranges.at(key).first,
+			flowfield_settings_ranges.at(key).second
+		);
+
+		generator->SetValue(key, value);
+		index++;
+	}
+
 	// Display tooltips
 	for (int i = 0; i < flowfield_tooltips.size(); i++)
 	{
@@ -159,41 +162,15 @@ void Gui::FlowfieldScreen()
 	//if (shader_on)
 	//	BeginShaderMode(shader);
 
-	// Preview Box
-	//DrawRectangleRec(preview_rect, BLANK);
-
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
-	EndShaderMode();
+	//EndShaderMode();
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 
 	// Blend slider text
-	switch ((int)generator->GetValue("active_blend_mode"))
-	{
-	case 0:
-		DrawText("BLEND_ALPHA", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 1:
-		DrawText("BLEND_ADDITIVE", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADDITIVE", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 2:
-		DrawText("BLEND_MULTIPLIED", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_MULTIPLIED", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 3:
-		DrawText("BLEND_ADD_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADD_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 4:
-		DrawText("BLEND_SUBTRACT_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_SUBTRACT_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 5:
-		DrawText("BLEND_ALPHA_PREMULTIPLY", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA_PREMULTIPLY", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 6:
-		DrawText("BLEND_CUSTOM", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_CUSTOM", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	default:
-		break;
-	}
+	std::string blend_mode_name = blend_mode_names[(int)generator->GetValue("active_blend_mode")];
+	DrawText(blend_mode_name.c_str(), blend_slider.x + blend_slider.width / 2 - (float)MeasureText(blend_mode_name.c_str(), 20) / 2, blend_slider.y + 10, 20, BLACK);
+
 }
 
 void Gui::ShapesScreen()
