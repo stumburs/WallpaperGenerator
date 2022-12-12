@@ -23,6 +23,8 @@ public:
 	Rectangle create_rect;
 	Rectangle view_rect;
 	Rectangle github_link_rect;
+	Rectangle back_rect_center;
+	Rectangle back_rect_corner;
 
 	// Create menu
 	Rectangle flowfield_rect;
@@ -92,7 +94,9 @@ public:
 		{ "z_mult", 0.02f},
 	};
 
-	std::map<std::string, float> flowfield_settings = {
+	std::map<std::string, float> flowfield_settings;
+
+	/*std::map<std::string, float> flowfield_settings = {
 		{ "window_width", (int)default_values["window_width"] },
 		{ "window_height", (int)default_values["window_height"] },
 		{ "scale", (int)default_values["scale"] },
@@ -104,7 +108,7 @@ public:
 		{ "x_mult", default_values["x_mult"] },
 		{ "y_mult", default_values["y_mult"] },
 		{ "z_mult", default_values["z_mult"] }
-	};
+	};*/
 
 	std::array<std::string, 11> flowfield_settings_keys = {
 		"window_width",
@@ -149,23 +153,23 @@ public:
 	};
 
 	std::array<Rectangle, 11> flowfield_setting_rects = { {
-		{ 60 + 50, 40 + 50, 400, 40 },
-		{ 60 + 50, 100 + 50, 400, 40 },
-		{ 60 + 50, 160 + 50, 400, 40 },
-		{ 60 + 50, 280 + 50, 400, 40 },
-		{ 60 + 50, 340 + 50, 400, 40 },
-		{ 60 + 50, 400 + 50, 400, 40 },
-		{ 60 + 50, 520 + 50, 400, 40 },
-		{ 60 + 50, 640 + 50, 400, 40 },
-		{ 60 + 50, 700 + 50, 400, 40 },
-		{ 60 + 50, 760 + 50, 400, 40 },
-		{ 60 + 50, 820 + 50, 400, 40 }
+		{ 110, 90, 400, 40 },
+		{ 110, 150, 400, 40 },
+		{ 110, 210, 400, 40 },
+		{ 110, 330, 400, 40 },
+		{ 110, 390, 400, 40 },
+		{ 110, 450, 400, 40 },
+		{ 110, 570, 400, 40 },
+		{ 110, 690, 400, 40 },
+		{ 110, 750, 400, 40 },
+		{ 110, 810, 400, 40 },
+		{ 110, 870, 400, 40 }
 	} };
 
 	std::array<Rectangle, 11> flowfield_setting_rects_and_scroll_pos = flowfield_setting_rects;
 
 	int active_menu = Menu::MAIN;
-	int active_algorithm = Generator::Generators::NONE;
+	int active_algorithm = 0;// Generator::Generators::NONE;
 	int active_blend_mode;
 
 	std::array<std::string, 7> blend_mode_names = {

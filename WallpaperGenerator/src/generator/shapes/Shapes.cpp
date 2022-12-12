@@ -5,7 +5,6 @@
 Shapes::Shapes()
 {
     Shapes::Reset();
-
 }
 
 Texture2D Shapes::GetImage()

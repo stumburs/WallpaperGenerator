@@ -12,7 +12,9 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 	// Main menu
 	create_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
 	view_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
-	github_link_rect = { (float)kWindowWidth - 220, (float)kWindowHeight - 50 , 100, 40 };
+	github_link_rect = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
+	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 100, 200, 100 };
+	back_rect_corner = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
 
 	// Create menu
 	flowfield_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
@@ -22,12 +24,13 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 	preview_rect = { (float)kWindowWidth - 850, 50, 800, 450 };
 	shader_checkbox = { (float)kWindowWidth - 850, 525, 40, 40 };
 	blend_slider = { (float)kWindowWidth - 650, 525, 400, 40 };
-	save_image = { (float)kWindowWidth - 850, 585, 40, 40 };
-	reset_image = { (float)kWindowWidth - 650, 585, 40, 40 };
-	update_settings = { (float)kWindowWidth - 850, 645, 40, 40 };
-	reset_settings = { (float)kWindowWidth - 650, 645, 40, 40 };
+	save_image = { (float)kWindowWidth - 800, 585, 160, 40 };
+	update_settings = { (float)kWindowWidth - 800, 645, 160, 40 };
+	reset_settings = { (float)kWindowWidth - 600, 645, 160, 40 };
 
 	scroll_pos = { 0 };
+
+	flowfield_settings.insert(default_values.begin(), default_values.end());
 
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 
@@ -79,13 +82,14 @@ void Gui::MainMenuScreen()
 	}
 	GuiButton(view_rect, "View");
 
-	DrawText(version_number.c_str(), kWindowWidth - MeasureText(version_number.c_str(), 20) - 20, kWindowHeight - 40, 20, BLACK);
+	DrawText(version_number.c_str(), kWindowWidth - MeasureText(version_number.c_str(), 20) - 160, kWindowHeight - 50, 20, BLACK);
 
 	if (GuiButton(github_link_rect, "GitHub"))
 	{
 		// Current solution causes heap corruption for unknown reasons.
 		OpenURL(github_url.c_str());
 	}
+
 }
 
 void Gui::CreateScreen()
@@ -101,14 +105,17 @@ void Gui::CreateScreen()
 		active_menu = Menu::GENERATOR;
 		generator->active_generator = Generator::SHAPES;
 	}
+
+	if (GuiButton(back_rect_center, "Back"))
+	{
+		active_menu = Menu::MAIN;
+	}
 }
 void Gui::FlowfieldScreen()
 {
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
 
 	Vector2 mouse_pos = GetMousePosition();
-
-	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
 
 	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 1000 }, &scroll_pos);
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
@@ -145,31 +152,37 @@ void Gui::FlowfieldScreen()
 
 	EndScissorMode();
 
-	if (GuiLabelButton(save_image, "Save Image"))
+	if (GuiButton(save_image, "Save Image"))
 	{
 		Image img = LoadImageFromTexture(generator->GetImage());
 		ImageFlipVertical(&img);
 		ExportImage(img, "image.png");
 	}
 
-	if (GuiLabelButton(update_settings, "Update settings"))
+	if (GuiButton(update_settings, "Update settings"))
 		generator->UpdateSettings();
 
-	if (GuiLabelButton(reset_settings, "Reset settings"))
+	if (GuiButton(reset_settings, "Reset settings"))
 		generator->ResetToDefault();
 
 	// Apply shader
 	//if (shader_on)
 	//	BeginShaderMode(shader);
-
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	//EndShaderMode();
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 
-	// Blend slider text
+	// Blend slider
+	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
 	std::string blend_mode_name = blend_mode_names[(int)generator->GetValue("active_blend_mode")];
 	DrawText(blend_mode_name.c_str(), blend_slider.x + blend_slider.width / 2 - (float)MeasureText(blend_mode_name.c_str(), 20) / 2, blend_slider.y + 10, 20, BLACK);
+
+	if (GuiButton(back_rect_corner, "Back"))
+	{
+		active_menu = Menu::CREATE;
+		SetTargetFPS(60);
+	}
 
 }
 
@@ -237,4 +250,10 @@ void Gui::ShapesScreen()
 	EndShaderMode();
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
+
+	if (GuiButton(back_rect_corner, "Back"))
+	{
+		active_menu = Menu::CREATE;
+		SetTargetFPS(60);
+	}
 }
