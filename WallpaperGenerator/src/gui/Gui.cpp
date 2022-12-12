@@ -46,6 +46,9 @@ void Gui::Draw()
 	case Gui::Menu::CREATE:
 		CreateScreen();
 		break;
+	case Gui::Menu::VIEW:
+		ViewScreen();
+		break;
 	case Gui::Menu::GENERATOR:
 
 		switch (generator->active_generator)
@@ -80,7 +83,10 @@ void Gui::MainMenuScreen()
 	{
 		active_menu = Menu::CREATE;
 	}
-	GuiButton(view_rect, "View");
+	if (GuiButton(view_rect, "View"))
+	{
+		ViewScreen();
+	}
 
 	DrawText(version_number.c_str(), kWindowWidth - MeasureText(version_number.c_str(), 20) - 160, kWindowHeight - 50, 20, BLACK);
 
@@ -89,7 +95,6 @@ void Gui::MainMenuScreen()
 		// Current solution causes heap corruption for unknown reasons.
 		OpenURL(github_url.c_str());
 	}
-
 }
 
 void Gui::CreateScreen()
@@ -111,6 +116,15 @@ void Gui::CreateScreen()
 		active_menu = Menu::MAIN;
 	}
 }
+
+void Gui::ViewScreen()
+{
+	std::string url = GetApplicationDirectory();
+	url += "images";
+	std::cout << url;
+	OpenURL(url.c_str());
+}
+
 void Gui::FlowfieldScreen()
 {
 	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
@@ -159,7 +173,7 @@ void Gui::FlowfieldScreen()
 		ExportImage(img, "image.png");
 	}
 
-	if (GuiButton(update_settings, "Update settings"))
+	if (GuiButton(update_settings, "Apply settings"))
 		generator->UpdateSettings();
 
 	if (GuiButton(reset_settings, "Reset settings"))

@@ -62,6 +62,7 @@ public:
 	{
 		MAIN = 0,
 		CREATE,
+		VIEW,
 		GENERATOR
 	};
 
@@ -187,6 +188,7 @@ public:
 	void Update();
 	void MainMenuScreen();
 	void CreateScreen();
+	void ViewScreen();
 	void FlowfieldScreen();
 	void ShapesScreen();
 
