@@ -11,7 +11,7 @@ public:
 		{ "window_height", 1080 },
 		{ "shapes_to_draw", 20 },
 		{ "seed", 69420u },
-		{ "active_blend_mode", BlendMode::BLEND_ALPHA }
+		{ "active_blend_mode", BlendMode::BLEND_ALPHA_PREMULTIPLY }
 	};
 
 	std::map<std::string, float> user_values = default_values;

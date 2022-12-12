@@ -170,7 +170,15 @@ void Gui::FlowfieldScreen()
 	{
 		Image img = LoadImageFromTexture(generator->GetImage());
 		ImageFlipVertical(&img);
-		ExportImage(img, "image.png");
+		if (DirectoryExists("images"))
+		{
+			std::cout << "yes";
+			ExportImage(img, "images/image.png");
+		}
+		else
+		{
+			ExportImage(img, "image.png");
+		}
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
@@ -237,22 +245,26 @@ void Gui::ShapesScreen()
 		break;
 	}
 
-	if (GuiLabelButton(save_image, "Save Image"))
+	if (GuiButton(save_image, "Save Image"))
 	{
 		Image img = LoadImageFromTexture(generator->GetImage());
 		ImageFlipVertical(&img);
-		ExportImage(img, "image.png");
+		if (DirectoryExists("images"))
+		{
+			std::cout << "yes";
+			ExportImage(img, "images/image.png");
+		}
+		else
+		{
+			ExportImage(img, "image.png");
+		}
 	}
 
-	if (GuiLabelButton(update_settings, "Update settings"))
-	{
+	if (GuiButton(update_settings, "Apply settings"))
 		generator->UpdateSettings();
-	}
 
-	if (GuiLabelButton(reset_settings, "Reset settings"))
-	{
+	if (GuiButton(reset_settings, "Reset settings"))
 		generator->ResetToDefault();
-	}
 
 	// Apply shader
 	//if (shader_on)
