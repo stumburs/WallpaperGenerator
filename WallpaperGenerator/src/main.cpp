@@ -4,7 +4,6 @@
 #undef RAYGUI_IMPLEMENTATION
 #include <iostream>
 #include "gui/Gui.h"
-#include "generator/Generator.h"
 
 const int kWindowWidth = 1600;
 const int kWindowHeight = 900;
@@ -16,19 +15,13 @@ int main()
 	InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
 	SetTargetFPS(60);
 
-	// Init generator
-	Generator generator(Generator::Generators::NONE);
-
 	// Init GUI
-	Gui gui(kWindowWidth, kWindowHeight, &generator);
+	Gui gui(kWindowWidth, kWindowHeight);
 
 	while (!WindowShouldClose())
 	{
 		// Update
-		{
-			generator.Update();
-			gui.Update();
-		}
+		gui.Update();
 
 		// Draw
 		BeginDrawing();

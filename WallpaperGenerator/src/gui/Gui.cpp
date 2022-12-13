@@ -1,11 +1,8 @@
 #include "Gui.h"
 #include "raygui.h"
-
 #include <iostream>
-Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
+Gui::Gui(int kWindowWidth, int kWindowHeight)
 {
-	this->generator = generator;
-
 	this->kWindowWidth = kWindowWidth;
 	this->kWindowHeight = kWindowHeight;
 
@@ -30,10 +27,7 @@ Gui::Gui(int kWindowWidth, int kWindowHeight, Generator *generator)
 
 	scroll_pos = { 0 };
 
-	flowfield_settings.insert(default_values.begin(), default_values.end());
-
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
-
 }
 
 void Gui::Draw()
@@ -51,14 +45,14 @@ void Gui::Draw()
 		break;
 	case Gui::Menu::GENERATOR:
 
-		switch (generator->active_generator)
+		switch (active_generator)
 		{
-		case Generator::Generators::NONE:
+		case Gui::ActiveGenerator::NONE:
 			break;
-		case Generator::Generators::FLOWFIELD:
+		case Gui::ActiveGenerator::FLOWFIELD:
 			FlowfieldScreen();
 			break;
-		case Generator::Generators::SHAPES:
+		case Gui::ActiveGenerator::SHAPES:
 			ShapesScreen();
 			break;
 		default:
@@ -73,8 +67,22 @@ void Gui::Draw()
 
 void Gui::Update()
 {
-	if (generator->active_generator != Generator::NONE)
-		this->preview_texture = generator->GetImage();
+	if (active_generator == Gui::ActiveGenerator::NONE)
+		return;
+
+	switch (active_generator)
+	{
+	case Gui::ActiveGenerator::FLOWFIELD:
+		this->preview_texture = f.GetImage();
+		f.Update();
+		break;
+	case Gui::ActiveGenerator::SHAPES:
+		this->preview_texture = s.GetImage();
+		s.Update();
+		break;
+	default:
+		break;
+	}
 }
 
 void Gui::MainMenuScreen()
@@ -102,18 +110,18 @@ void Gui::CreateScreen()
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
-		generator->active_generator = Generator::FLOWFIELD;
+		active_generator = Gui::ActiveGenerator::FLOWFIELD;
 		SetTargetFPS(0);
 	}
 	if (GuiButton(shapes_rect, "Shapes"))
 	{
 		active_menu = Menu::GENERATOR;
-		generator->active_generator = Generator::SHAPES;
+		active_generator = Gui::ActiveGenerator::SHAPES;
 	}
-
 	if (GuiButton(back_rect_center, "Back"))
 	{
 		active_menu = Menu::MAIN;
+		active_generator = Gui::ActiveGenerator::NONE;
 	}
 }
 
@@ -121,71 +129,61 @@ void Gui::ViewScreen()
 {
 	std::string url = GetApplicationDirectory();
 	url += "images";
-	std::cout << url;
 	OpenURL(url.c_str());
 }
 
 void Gui::FlowfieldScreen()
 {
-	//shader_on = GuiCheckBox(shader_checkbox, "SHADER", shader_on);
-
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 1000 }, &scroll_pos);
+	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, (float)f.user_settings.size() * 63 }, &scroll_pos);
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
-
-	// Apply scrollpos
-	std::copy(std::begin(flowfield_setting_rects), std::end(flowfield_setting_rects), std::begin(flowfield_setting_rects_and_scroll_pos));
-	for (Rectangle& rect : flowfield_setting_rects_and_scroll_pos)
-		rect.y += scroll_pos.y;
 
 	// Render and get values from sliders
 	int index = 0;
-	for (const auto& key : flowfield_settings_keys)
+	for (auto& setting : f.user_settings)
 	{
+		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
+		
 		float value = GuiSliderBar(
-			flowfield_setting_rects_and_scroll_pos[index],
-			TextFormat("%0.*f", flowfield_settings_precision[key], generator->GetValue(key)),
-			key.c_str(),
-			generator->GetValue(key),
-			flowfield_settings_ranges.at(key).first,
-			flowfield_settings_ranges.at(key).second
-		);
-
-		generator->SetValue(key, value);
+				this_rect,
+				TextFormat("%0.*f", setting.precision, setting.value),
+				setting.name.c_str(),
+				setting.value,
+				setting.range.first,
+				setting.range.second
+			);
+			setting.value = value;
+		
 		index++;
 	}
 
 	// Display tooltips
-	for (int i = 0; i < flowfield_tooltips.size(); i++)
+	int i = 0;
+	for (const auto& setting : f.user_settings)
 	{
-		Rectangle rect = { flowfield_setting_rects[i].x, flowfield_setting_rects[i].y + scroll_pos.y, flowfield_setting_rects[i].width, flowfield_setting_rects[i].height };
+		Rectangle rect = { first_setting_rect.x, first_setting_rect.y + i * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
 		if (CheckCollisionPointRec(mouse_pos, rect))
-			DrawText(flowfield_tooltips[i].c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
+			DrawText(setting.tooltip.c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
+		i++;
 	}
-
 	EndScissorMode();
 
 	if (GuiButton(save_image, "Save Image"))
 	{
-		Image img = LoadImageFromTexture(generator->GetImage());
+		Image img = LoadImageFromTexture(f.GetImage());
 		ImageFlipVertical(&img);
 		if (DirectoryExists("images"))
-		{
-			std::cout << "yes";
 			ExportImage(img, "images/image.png");
-		}
 		else
-		{
 			ExportImage(img, "image.png");
-		}
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
-		generator->UpdateSettings();
+		f.ApplySettings();
 
 	if (GuiButton(reset_settings, "Reset settings"))
-		generator->ResetToDefault();
+		f.ResetSettings();
 
 	// Apply shader
 	//if (shader_on)
@@ -195,17 +193,12 @@ void Gui::FlowfieldScreen()
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
 
-	// Blend slider
-	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
-	std::string blend_mode_name = blend_mode_names[(int)generator->GetValue("active_blend_mode")];
-	DrawText(blend_mode_name.c_str(), blend_slider.x + blend_slider.width / 2 - (float)MeasureText(blend_mode_name.c_str(), 20) / 2, blend_slider.y + 10, 20, BLACK);
-
 	if (GuiButton(back_rect_corner, "Back"))
 	{
 		active_menu = Menu::CREATE;
+		active_generator = Gui::ActiveGenerator::NONE;
 		SetTargetFPS(60);
 	}
-
 }
 
 void Gui::ShapesScreen()
@@ -213,66 +206,62 @@ void Gui::ShapesScreen()
 	// Preview Box
 	DrawRectangleRec(preview_rect, WHITE);
 
-	//shader_on = GuiCheckBox({ kWindowWidth - 850, 525, 40, 40 }, "SHADER", shader_on);
+	Vector2 mouse_pos = GetMousePosition();
 
-	//active_blend_mode = GuiSliderBar(blend_slider, NULL, NULL, active_blend_mode, 0, 6);
-	generator->SetValue("active_blend_mode", GuiSliderBar(blend_slider, NULL, NULL, generator->GetValue("active_blend_mode"), 0, 6));
+	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, (float)s.user_settings.size() * 63 }, &scroll_pos);
+	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
 
-	switch ((int)generator->GetValue("active_blend_mode"))
+	// Render and get values from sliders
+	int index = 0;
+	for (auto& setting : s.user_settings)
 	{
-	case 0:
-		DrawText("BLEND_ALPHA", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 1:
-		DrawText("BLEND_ADDITIVE", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADDITIVE", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 2:
-		DrawText("BLEND_MULTIPLIED", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_MULTIPLIED", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 3:
-		DrawText("BLEND_ADD_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ADD_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 4:
-		DrawText("BLEND_SUBTRACT_COLORS", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_SUBTRACT_COLORS", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 5:
-		DrawText("BLEND_ALPHA_PREMULTIPLY", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_ALPHA_PREMULTIPLY", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	case 6:
-		DrawText("BLEND_CUSTOM", blend_slider.x + blend_slider.width / 2 - (float)MeasureText("BLEND_CUSTOM", 20) / 2, blend_slider.y + 10, 20, BLACK);
-		break;
-	default:
-		break;
+		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
+
+		float value = GuiSliderBar(
+			this_rect,
+			TextFormat("%0.*f", setting.precision, setting.value),
+			setting.name.c_str(),
+			setting.value,
+			setting.range.first,
+			setting.range.second
+		);
+		setting.value = value;
+
+		index++;
 	}
+
+	// Display tooltips
+	int i = 0;
+	for (const auto& setting : s.user_settings)
+	{
+		Rectangle rect = { first_setting_rect.x, first_setting_rect.y + i * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
+		if (CheckCollisionPointRec(mouse_pos, rect))
+			DrawText(setting.tooltip.c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
+		i++;
+	}
+	EndScissorMode();
 
 	if (GuiButton(save_image, "Save Image"))
 	{
-		Image img = LoadImageFromTexture(generator->GetImage());
+		Image img = LoadImageFromTexture(s.GetImage());
 		ImageFlipVertical(&img);
 		if (DirectoryExists("images"))
-		{
-			std::cout << "yes";
 			ExportImage(img, "images/image.png");
-		}
 		else
-		{
 			ExportImage(img, "image.png");
-		}
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
-		generator->UpdateSettings();
+		s.ApplySettings();
 
 	if (GuiButton(reset_settings, "Reset settings"))
-		generator->ResetToDefault();
+		s.ResetSettings();
 
 	// Apply shader
 	//if (shader_on)
 	//	BeginShaderMode(shader);
 
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
-
-	//DrawTexturePro(s.image.texture, { 0, 0, (float)s.image.texture.width, (float)-s.image.texture.height }, { kWindowWidth - 850, 50, 800, 450 }, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();
 
 	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
@@ -280,6 +269,7 @@ void Gui::ShapesScreen()
 	if (GuiButton(back_rect_corner, "Back"))
 	{
 		active_menu = Menu::CREATE;
+		active_generator = Gui::ActiveGenerator::NONE;
 		SetTargetFPS(60);
 	}
 }

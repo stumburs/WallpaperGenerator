@@ -3,50 +3,64 @@
 #include "Particle.h"
 #include "../../PerlinNoise.hpp"
 #include <map>
-class Flowfield
+#include "../Generator.h"
+class Flowfield : public Generator
 {
 public:
+	struct Setting
+	{
+		std::string name;
+		float value;
+		int precision;
+		std::pair<float, float> range;
+		std::string tooltip;
+	};
+
+	std::vector<Setting> default_settings =
+	{
+		{ "Window Width", 1920, 0, { 2, 1920 }, "Final image horizontal resolution" },
+		{ "Window Height", 1080, 0, { 2, 1080 }, "Final image vertical resolution" },
+		{ "Scale", 20, 0, { 2, 40 }, "Lower number = more detail, but worse performance" },
+		{ "Seed", 69420, 0, {0, UINT32_MAX }, "Random noise seed" },
+		{ "Flowfield Strength", 0.01f, 3, { 0.001f, 0.1f }, "How accurately particles follow the flowfield" },
+		{ "Particle Count", 10000, 0, { 500, 50000 }, "Amount of particles" },
+		{ "Particle Speed", 1.0f, 2, { 0, 2.0f }, "How quickly particles move" },
+		{ "Particle Strength", 1, 0, { 1, 255 }, "Particle color intensity" },
+		{ "Noise Detail", 4, 0, { 1, 16 }, "Perlin noise octaves. Higher number = worse performance" },
+		{ "X Multiplier", 0.02f, 2, { 0.01f, 0.3f }, "Noise x-axis multiplier" },
+		{ "Y Multiplier", 0.02f, 2, { 0.01f, 0.3f }, "Noise y-axis multiplier" },
+		{ "Z Multiplier", 0.02f, 2, { 0.01f, 0.3f }, "Noise z-axis multiplier" },
+		{ "Background G", 0, 0, { 0, 255 }, "Background color red" },
+		{ "Background B", 0, 0, { 0, 255 }, "Background color green" },
+		{ "Background R", 0, 0, { 0, 255 }, "Background color blue" },
+		{ "Background A", 255, 0, { 0, 255 }, "Background color transparency" },
+		{ "Blend Mode", BlendMode::BLEND_ALPHA_PREMULTIPLY, 0, { 0, 5 }, "Particle and background image blending."}
+	};
+
+	std::vector<Setting> user_settings = default_settings;
 
 	int window_width;
 	int window_height;
-
-	std::map<std::string, float> default_values = {
-		{ "window_width", 1920 },
-		{ "window_height", 1080 },
-		{ "scale", 20 },
-		{ "seed", 69420u},
-		{ "flowfield_strength", 0.01f },
-		{ "particle_count", 10000},
-		{ "particle_speed", 1.0f },
-		{ "particle_strength", 1u },
-		{ "noise_detail", 4},
-		{ "x_mult", 0.02f},
-		{ "y_mult", 0.02f},
-		{ "z_mult", 0.02f},
-		{ "active_blend_mode", BlendMode::BLEND_ALPHA_PREMULTIPLY }
-	};
-
-	std::map<std::string, float> user_values = default_values;
-
 	int scale;
-	int render_width;
-	int render_height;
-
 	siv::PerlinNoise::seed_type seed;
-
 	float flowfield_strength;
 	int particle_count;
 	float particle_speed;
-	float particle_size;
 	unsigned char particle_strength;
-
-	float noise_height;
 	int noise_detail;
 	float x_mult;
 	float y_mult;
 	float z_mult;
+	unsigned char background_r;
+	unsigned char background_g;
+	unsigned char background_b;
+	unsigned char background_a;
+	int blend_mode;
+
+	int render_width;
+	int render_height;
+	float noise_height;
 	float z;
-	int active_blend_mode;
 
 
 	siv::PerlinNoise perlin;
@@ -57,13 +71,10 @@ public:
 
 public:
 	Flowfield();
-	void InitValues();
+	void Init();
 	void Update();
+	void ApplySettings();
+	void ResetSettings();
 	Texture2D GetImage();
-	void ResetImage();
-	void Reset();
-	void InitParticles();
-	void InitFlowfield();
-	std::map<std::string, float> GetUserValues();
 };
 

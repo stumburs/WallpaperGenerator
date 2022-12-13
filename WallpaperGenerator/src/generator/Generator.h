@@ -1,27 +1,11 @@
 #pragma once
-#include "flowfield/Flowfield.h"
-#include "shapes/Shapes.h"
-
-class Generator : public Flowfield, public Shapes
+#include <raylib.h>
+class Generator
 {
 public:
-
-	enum Generators
-	{
-		NONE = 0,
-		FLOWFIELD,
-		SHAPES,
-		AMOUNT = SHAPES
-	};
-
-	int active_generator;
-
-	Generator(int generator_type);
-	void Update();
-	void UpdateSettings();
-	void ResetToDefault();
-	std::map<std::string, float> GetUserValues();
-	void SetValue(std::string key, float value);
-	float GetValue(std::string key);
-	Texture2D GetImage();
+	virtual void Init() = 0;
+	virtual void Update() = 0;
+	virtual void ApplySettings() = 0;
+	virtual void ResetSettings() = 0;
+	virtual Texture2D GetImage() = 0;
 };

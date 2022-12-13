@@ -2,31 +2,49 @@
 #include "raylib.h"
 #include <map>
 #include <string>
-class Shapes
+#include <vector>
+#include "../Generator.h"
+class Shapes : public Generator
 {
 public:
 
-	std::map<std::string, float> default_values = {
-		{ "window_width", 1920 },
-		{ "window_height", 1080 },
-		{ "shapes_to_draw", 20 },
-		{ "seed", 69420u },
-		{ "active_blend_mode", BlendMode::BLEND_ALPHA_PREMULTIPLY }
+	struct Setting
+	{
+		std::string name;
+		float value;
+		int precision;
+		std::pair<float, float> range;
+		std::string tooltip;
 	};
 
-	std::map<std::string, float> user_values = default_values;
+	std::vector<Setting> default_settings =
+	{
+		{ "Window Width", 1920, 0, { 2, 1920 }, "Final image horizontal resolution" },
+		{ "Window Height", 1080, 0, { 2, 1080 }, "Final image vertical resolution" },
+		{ "Shapes Amount", 20, 0, { 1, 100 }, "Amount of shapes to draw" },
+		{ "Shape Alpha", 255, 0, { 1, 255 }, "How transparent each shape is" },
+		{ "Seed", 69420, 0, {0, UINT32_MAX }, "Random noise seed" },
+		{ "Blend Mode", BlendMode::BLEND_ADDITIVE, 0, { 0, 5 }, "Particle and background image blending."}
+	};
+
+	std::vector<Setting> user_settings = default_settings;
+
 	int window_width;
 	int window_height;
-	int shapes_drawn = 0;
-	int shapes_to_draw;
-	int active_blend_mode;
+	int shapes_amount;
+	int shape_alpha;
+	int seed;
+	int blend_mode;
 
+	int shapes_drawn = 0;
 	RenderTexture2D image;
 
 public:
 	Shapes();
+	void Init();
 	void Update();
-	void Reset();
+	void ApplySettings();
+	void ResetSettings();
 	Texture2D GetImage();
 };
 

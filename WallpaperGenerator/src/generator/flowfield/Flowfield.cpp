@@ -3,42 +3,63 @@
 #include "../../Functions.h"
 Flowfield::Flowfield()
 {
-    InitValues();
-
-    perlin.reseed(seed);
-
-    InitParticles();
-
-    // Init flowfield
-    InitFlowfield();
-
-    // Reset / Init Texture
-    ResetImage();
+    Flowfield::Init();
 }
 
-void Flowfield::InitValues()
+void Flowfield::Init()
 {
-    window_width = (int)user_values["window_width"];
-    window_height = (int)user_values["window_height"];
-    scale = (int)user_values["scale"];
-    seed = (unsigned char)user_values["seed"];
-    flowfield_strength = user_values["flowfield_strength"];
-    particle_count = (int)user_values["particle_count"];
-    particle_speed = user_values["particle_speed"];
-    particle_size = user_values["particle_size"];
-    particle_strength = (unsigned char)user_values["particle_strength"];
-    noise_height = user_values["noise_height"];
-    noise_detail = (int)user_values["noise_detail"];
-    x_mult = user_values["x_mult"];
-    y_mult = user_values["y_mult"];
-    z_mult = user_values["z_mult"];
-    z = user_values["z"];
-    active_blend_mode = user_values["active_blend_mode"];
-
-    render_width = window_width / scale + 1;
-    render_height = window_height / scale + 1;
+    window_width = user_settings[0].value;
+    window_height = user_settings[1].value;
+    scale = user_settings[2].value;
+    seed = user_settings[3].value;
+    flowfield_strength = user_settings[4].value;
+    particle_count = user_settings[5].value;
+    particle_speed = user_settings[6].value;
+    particle_strength = user_settings[7].value;
+    noise_detail = user_settings[8].value;
+    x_mult = user_settings[9].value;
+    y_mult = user_settings[10].value;
+    z_mult = user_settings[11].value;
+    background_r = user_settings[12].value;
+    background_g = user_settings[13].value;
+    background_b = user_settings[14].value;
+    background_a = user_settings[15].value;
+    blend_mode = user_settings[16].value;
 
     perlin.reseed(seed);
+    render_width = window_width / scale + 1;
+    render_height = window_height / scale + 1;
+    z = 0;
+
+    // Particles
+    particles.clear();
+    for (int i = 0; i < particle_count; i++)
+    {
+        Particle p;
+        p.pos = { (float)GetRandomValue(0, window_width), (float)GetRandomValue(0, window_height) };
+        particles.push_back(p);
+    }
+
+    // Flowfield
+    flowfield.clear();
+    for (int x = 0; x < render_width; x++)
+    {
+        flowfield.push_back(std::vector<Vector2>());
+        for (int y = 0; y < render_height; y++)
+        {
+            // Calculate each vector
+            float angle = (float)Map(perlin.octave3D_01((x * x_mult), (y * y_mult), (z * z_mult), noise_detail), 0, 1, 0, 359);
+            Vector2 vec = Vec2FromAngle(angle);
+            vec = SetMagnitude(vec, 1);
+            flowfield[x].push_back(vec);
+        }
+    }
+
+    image = LoadRenderTexture(window_width, window_height);
+    return_image = LoadRenderTexture(window_width, window_height);
+    BeginTextureMode(image);
+    ClearBackground(BLANK);
+    EndTextureMode();
 }
 
 void Flowfield::Update()
@@ -86,39 +107,32 @@ void Flowfield::Update()
     z += 0.06f;
 }
 
-Texture2D Flowfield::GetImage()
+void Flowfield::ApplySettings()
 {
-    BeginTextureMode(return_image);
-    ClearBackground(BLACK);
-    BeginBlendMode(active_blend_mode);
-    DrawTexturePro(image.texture, { 0, 0, (float)image.texture.width, (float)image.texture.height }, { 0, 0, (float)return_image.texture.width, (float)return_image.texture.height }, { 0, 0 }, 0.0f, WHITE);
-    EndBlendMode();
-    EndTextureMode();
-    return return_image.texture;
-}
+    window_width = user_settings[0].value;
+    window_height = user_settings[1].value;
+    scale = user_settings[2].value;
+    seed = user_settings[3].value;
+    flowfield_strength = user_settings[4].value;
+    particle_count = user_settings[5].value;
+    particle_speed = user_settings[6].value;
+    particle_strength = user_settings[7].value;
+    noise_detail = user_settings[8].value;
+    x_mult = user_settings[9].value;
+    y_mult = user_settings[10].value;
+    z_mult = user_settings[11].value;
+    background_r = user_settings[12].value;
+    background_g = user_settings[13].value;
+    background_b = user_settings[14].value;
+    background_a = user_settings[15].value;
+    blend_mode = user_settings[16].value;
 
-// Init / Reset image
-void Flowfield::ResetImage()
-{
-    UnloadRenderTexture(image);
-    UnloadRenderTexture(return_image);
-    image = LoadRenderTexture(window_width, window_height);
-    return_image = LoadRenderTexture(window_width, window_height);
-    BeginTextureMode(image);
-    ClearBackground(BLANK);
-    EndTextureMode();
-    z = noise_height;
-}
+    perlin.reseed(seed);
+    render_width = window_width / scale + 1;
+    render_height = window_height / scale + 1;
+    z = 0;
 
-void Flowfield::Reset()
-{
-    InitValues();
-    InitParticles();
-    InitFlowfield();
-    ResetImage();
-}
-
-void Flowfield::InitParticles() {
+    // Particles
     particles.clear();
     for (int i = 0; i < particle_count; i++)
     {
@@ -126,10 +140,8 @@ void Flowfield::InitParticles() {
         p.pos = { (float)GetRandomValue(0, window_width), (float)GetRandomValue(0, window_height) };
         particles.push_back(p);
     }
-}
 
-void Flowfield::InitFlowfield()
-{
+    // Flowfield
     flowfield.clear();
     for (int x = 0; x < render_width; x++)
     {
@@ -137,15 +149,35 @@ void Flowfield::InitFlowfield()
         for (int y = 0; y < render_height; y++)
         {
             // Calculate each vector
-            float angle = (float)Map(perlin.octave3D_01((x * x_mult), (y * y_mult), (noise_height * z_mult), noise_detail), 0, 1, 0, 359);
+            float angle = (float)Map(perlin.octave3D_01((x * x_mult), (y * y_mult), (z * z_mult), noise_detail), 0, 1, 0, 359);
             Vector2 vec = Vec2FromAngle(angle);
             vec = SetMagnitude(vec, 1);
             flowfield[x].push_back(vec);
         }
     }
+
+    UnloadRenderTexture(image);
+    UnloadRenderTexture(return_image);
+    image = LoadRenderTexture(window_width, window_height);
+    return_image = LoadRenderTexture(window_width, window_height);
+    BeginTextureMode(image);
+    ClearBackground(BLANK);
+    EndTextureMode();
 }
 
-std::map<std::string, float> Flowfield::GetUserValues()
+// Init / Reset image
+void Flowfield::ResetSettings()
 {
-    return user_values;
+    user_settings = default_settings;
+}
+
+Texture2D Flowfield::GetImage()
+{
+    BeginTextureMode(return_image);
+    ClearBackground({background_r, background_g, background_b, background_a});
+    BeginBlendMode(blend_mode);
+    DrawTexturePro(image.texture, { 0, 0, (float)image.texture.width, (float)image.texture.height }, { 0, 0, (float)return_image.texture.width, (float)return_image.texture.height }, { 0, 0 }, 0.0f, WHITE);
+    EndBlendMode();
+    EndTextureMode();
+    return return_image.texture;
 }

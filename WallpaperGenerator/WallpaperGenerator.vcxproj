@@ -141,8 +141,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\generator\Generator.h" />
+    <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\gui\Gui.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\generator\flowfield\Flowfield.h" />
