@@ -20,4 +20,6 @@ struct Particle
     void DrawCircle(const float &size, const Color &color);
 
     void DrawPixel(const Color& color);
+
+    Color GetColorAtPos(const std::vector<std::vector<Color>>& vec);
 };

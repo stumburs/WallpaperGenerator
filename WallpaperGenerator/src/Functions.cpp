@@ -17,3 +17,14 @@ Vector2 SetMagnitude(const Vector2& v, const float& magnitude)
     new_vec.y = v.y * magnitude;
     return new_vec;
 }
+
+float SimpleLerp(float a, float b, float f)
+{
+    return a + f * (b - a);
+}
+
+int SimpleClamp(int d, int min, int max)
+{
+    const int t = d < min ? min : d;
+    return t > max ? max : t;
+}

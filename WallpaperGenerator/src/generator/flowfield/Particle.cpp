@@ -2,6 +2,8 @@
 #include "Particle.h"
 #include "raylib.h"
 #include "raymath.h"
+#include <algorithm>
+#include "../../Functions.h"
 
 void Particle::Update(const std::vector<std::vector<Vector2>>& flowfield, const float &max_speed, const int &WIDTH, const int &HEIGHT, const int &SCALE)
 {
@@ -42,4 +44,11 @@ void Particle::DrawCircle(const float& size, const Color& color)
 void Particle::DrawPixel(const Color &color)
 {
     RAYLIB_H::DrawPixel(pos.x, pos.y, color);
+}
+
+Color Particle::GetColorAtPos(const std::vector<std::vector<Color>>& vec)
+{
+    int x = SimpleClamp((int)pos.x, 0, (int)vec.size() - 1);
+    int y = SimpleClamp((int)pos.y, 0, (int)vec[x].size() - 1);
+    return vec.at(x).at(y);
 }

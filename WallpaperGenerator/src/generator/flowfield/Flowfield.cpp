@@ -2,6 +2,9 @@
 #include "../../PerlinNoise.hpp"
 #include "../../Functions.h"
 #include <string>
+#include <algorithm>
+#include <cmath>
+#include <iostream>
 Flowfield::Flowfield()
 {
     Flowfield::Init();
@@ -23,12 +26,43 @@ void Flowfield::Init()
     z_mult = user_settings[11].value;
     background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3)) };
     background_a = user_settings[13].value;
-    blend_mode = user_settings[14].value;
+    top = { (unsigned char)std::stoi(user_settings[14].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(6, 3)), 255 };
+    bottom = { (unsigned char)std::stoi(user_settings[15].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(6, 3)), 255 };
+    left = { (unsigned char)std::stoi(user_settings[16].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(6, 3)), 255 };
+    right = { (unsigned char)std::stoi(user_settings[17].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(6, 3)), 255 };
+    blend_mode = user_settings[18].value;
 
     perlin.reseed(seed);
     render_width = window_width / scale + 1;
     render_height = window_height / scale + 1;
     z = 0;
+
+    color_vector.clear();
+    // Init color vector to white
+    for (int x = 0; x < window_height; x++)
+    {
+        std::vector<Color> y_vec;
+        for (int y = 0; y < window_width; y++)
+        {
+            Color top_to_bottom = { 0 };
+            top_to_bottom.r = SimpleLerp((float)top.r, (float)bottom.r, Map(x, 0, window_height - 1, 0, 1));
+            top_to_bottom.g = SimpleLerp((float)top.g, (float)bottom.g, Map(x, 0, window_height - 1, 0, 1));
+            top_to_bottom.b = SimpleLerp((float)top.b, (float)bottom.b, Map(x, 0, window_height - 1, 0, 1));
+
+            Color left_to_right = { 0 };
+            left_to_right.r = SimpleLerp((float)left.r, (float)right.r, Map(y, 0, window_width - 1, 0, 1));
+            left_to_right.g = SimpleLerp((float)left.g, (float)right.g, Map(y, 0, window_width - 1, 0, 1));
+            left_to_right.b = SimpleLerp((float)left.b, (float)right.b, Map(y, 0, window_width - 1, 0, 1));
+
+            Color result = { 0 };
+            result.r = SimpleClamp(((int)left_to_right.r + (int)top_to_bottom.r) / 2, 0, 255);
+            result.g = SimpleClamp(((int)left_to_right.g + (int)top_to_bottom.g) / 2, 0, 255);
+            result.b = SimpleClamp(((int)left_to_right.b + (int)top_to_bottom.b) / 2, 0, 255);
+            result.a = particle_strength;
+            y_vec.push_back({ result });
+        }
+        color_vector.push_back(y_vec);
+    }
 
     // Particles
     particles.clear();
@@ -88,15 +122,13 @@ void Flowfield::Update()
         // Draw Particles
         for (int i = 0; i < particles.size(); i++)
         {
-            /*particles[i].DrawPixel({ 255,
-                                        (unsigned char)Map(particles[i].pos.x, 0, window_width, 0, 255),
-                                        (unsigned char)Map(particles[i].pos.y, 0, window_height, 0, 255),
-                                        particle_strength });*/
-            particles[i].DrawPixel({
+            Color c = particles[i].GetColorAtPos(color_vector);
+            particles[i].DrawPixel(c);
+            /*particles[i].DrawPixel({
                 (unsigned char)Map(particles[i].pos.y, 0, window_height, 255, 128),
                 0,
                 (unsigned char)Map(particles[i].pos.y, 0, window_height , 128, 255),
-                particle_strength });
+                particle_strength });*/
 
         }
     }
@@ -129,14 +161,53 @@ void Flowfield::ApplySettings()
     x_mult = user_settings[9].value;
     y_mult = user_settings[10].value;
     z_mult = user_settings[11].value;
-    background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3))};
+    background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3)) };
     background_a = user_settings[13].value;
-    blend_mode = user_settings[14].value;
+    top = { (unsigned char)std::stoi(user_settings[14].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(6, 3)), 255 };
+    bottom = { (unsigned char)std::stoi(user_settings[15].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(6, 3)), 255 };
+    left = { (unsigned char)std::stoi(user_settings[16].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(6, 3)), 255 };
+    right = { (unsigned char)std::stoi(user_settings[17].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(6, 3)), 255 };
+    blend_mode = user_settings[18].value;
 
     perlin.reseed(seed);
     render_width = window_width / scale + 1;
     render_height = window_height / scale + 1;
     z = 0;
+
+    color_vector.clear();
+    // Init color vector
+    for (int x = 0; x < window_height; x++)
+    {
+        std::vector<Color> y_vec;
+        for (int y = 0; y < window_width; y++)
+        {
+            Color top_to_bottom = { 0 };
+            top_to_bottom.r = SimpleLerp((float)top.r, (float)bottom.r, Map(x, 0, window_height - 1, 0, 1));
+            top_to_bottom.g = SimpleLerp((float)top.g, (float)bottom.g, Map(x, 0, window_height - 1, 0, 1));
+            top_to_bottom.b = SimpleLerp((float)top.b, (float)bottom.b, Map(x, 0, window_height - 1, 0, 1));
+            top_to_bottom.a = 255;
+
+            Color left_to_right = { 0 };
+            left_to_right.r = SimpleLerp((float)left.r, (float)right.r, Map(y, 0, window_width - 1, 0, 1));
+            left_to_right.g = SimpleLerp((float)left.g, (float)right.g, Map(y, 0, window_width - 1, 0, 1));
+            left_to_right.b = SimpleLerp((float)left.b, (float)right.b, Map(y, 0, window_width - 1, 0, 1));
+            left_to_right.a = 255;
+
+            Color result = { 0 };
+            result.r = SimpleClamp(((int)left_to_right.r + (int)top_to_bottom.r) / 2, 0, 255);
+            result.g = SimpleClamp(((int)left_to_right.g + (int)top_to_bottom.g) / 2, 0, 255);
+            result.b = SimpleClamp(((int)left_to_right.b + (int)top_to_bottom.b) / 2, 0, 255);
+            result.a = particle_strength;
+            y_vec.push_back({ result });
+        }
+        color_vector.push_back(y_vec);
+    }
+
+    //std::cout << "TOP: " << static_cast<unsigned>(top.r) << " " << static_cast<unsigned>(top.g) << " " << static_cast<unsigned>(top.b) << " " << static_cast<unsigned>(top.a) << "\n";
+    //std::cout << "BOTTOM: " << static_cast<unsigned>(bottom.r) << " " << static_cast<unsigned>(bottom.g) << " " << static_cast<unsigned>(bottom.b) << " " << static_cast<unsigned>(bottom.a) << "\n";
+    //std::cout << "LEFT: " << static_cast<unsigned>(left.r) << " " << static_cast<unsigned>(left.g) << " " << static_cast<unsigned>(left.b) << " " << static_cast<unsigned>(left.a) << "\n";
+    //std::cout << "RIGHT: " << static_cast<unsigned>(right.r) << " " << static_cast<unsigned>(right.g) << " " << static_cast<unsigned>(right.b) << " " << static_cast<unsigned>(right.a) << "\n";
+
 
     // Particles
     particles.clear();
