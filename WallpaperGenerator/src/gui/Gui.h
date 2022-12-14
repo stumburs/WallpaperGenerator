@@ -10,7 +10,7 @@ class Gui
 private:
 public:
 
-	const std::string version_number = "0.3-alpha";
+	const std::string version_number = "0.4-alpha";
 	const std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
 
 	Texture2D preview_texture{};
