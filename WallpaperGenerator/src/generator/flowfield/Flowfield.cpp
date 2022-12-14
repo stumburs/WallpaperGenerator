@@ -9,10 +9,10 @@ Flowfield::Flowfield()
 
 void Flowfield::Init()
 {
-    window_width = user_settings[0].value;
-    window_height = user_settings[1].value;
-    scale = user_settings[2].value;
-    seed = user_settings[3].value;
+    window_width = std::stoi(user_settings[0].string_value);
+    window_height = std::stoi(user_settings[1].string_value);
+    seed = std::stoi(user_settings[2].string_value);
+    scale = user_settings[3].value;
     flowfield_strength = user_settings[4].value;
     particle_count = user_settings[5].value;
     particle_speed = user_settings[6].value;
@@ -108,10 +108,19 @@ void Flowfield::Update()
 
 void Flowfield::ApplySettings()
 {
-    window_width = user_settings[0].value;
-    window_height = user_settings[1].value;
-    scale = user_settings[2].value;
-    seed = user_settings[3].value;
+    try
+    {
+        window_width = std::stoi(user_settings[0].string_value);
+        window_height = std::stoi(user_settings[1].string_value);
+    }
+    catch (const std::exception&) {}
+    
+    try
+    {
+        seed = std::stoi(user_settings[2].string_value);
+    }
+    catch (const std::exception&){}
+    scale = user_settings[3].value;
     flowfield_strength = user_settings[4].value;
     particle_count = user_settings[5].value;
     particle_speed = user_settings[6].value;

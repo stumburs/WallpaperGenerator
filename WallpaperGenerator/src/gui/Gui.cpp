@@ -153,6 +153,8 @@ void Gui::FlowfieldScreen()
 		std::string return_value = "";
 		std::stringstream ss(return_value);
 
+		char* text[6]{};
+
 		switch (setting.input_type)
 		{
 		case Flowfield::InputType::NONE:
@@ -176,22 +178,26 @@ void Gui::FlowfieldScreen()
 			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
 			setting.string_value = ss.str();
 			break;
+		case Flowfield::InputType::GUI_TEXT_BOX:
+			
+			*text = _strdup(setting.string_value.c_str());
+			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
+			{
+				setting.text_box_editable = !setting.text_box_editable;
+			}
+			setting.string_value = *text;
+			break;
 		default:
 			break;
 		}
+
+		// Tooltips
+		if (CheckCollisionPointRec(mouse_pos, this_rect))
+			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
 		
 		index++;
 	}
 
-	// Display tooltips
-	int i = 0;
-	for (const auto& setting : f.user_settings)
-	{
-		Rectangle rect = { first_setting_rect.x, first_setting_rect.y + i * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		if (CheckCollisionPointRec(mouse_pos, rect))
-			DrawText(setting.tooltip.c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-		i++;
-	}
 	EndScissorMode();
 
 	if (GuiButton(save_image, "Save Image"))
@@ -228,12 +234,9 @@ void Gui::FlowfieldScreen()
 
 void Gui::ShapesScreen()
 {
-	// Preview Box
-	DrawRectangleRec(preview_rect, WHITE);
-
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, (float)s.user_settings.size() * 63 }, &scroll_pos);
+	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
 
 	// Render and get values from sliders
@@ -241,28 +244,55 @@ void Gui::ShapesScreen()
 	for (auto& setting : s.user_settings)
 	{
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
+		float value{};
+		int color_as_int{};
+		Color c{};
+		std::string return_value = "";
+		std::stringstream ss(return_value);
 
-		float value = GuiSliderBar(
-			this_rect,
-			TextFormat("%0.*f", setting.precision, setting.value),
-			setting.name.c_str(),
-			setting.value,
-			setting.range.first,
-			setting.range.second
-		);
-		setting.value = value;
+		char* text[6]{};
+
+		switch (setting.input_type)
+		{
+		case Flowfield::InputType::NONE:
+			break;
+		case Flowfield::InputType::GUI_SLIDER_BAR:
+			value = GuiSliderBar(
+				this_rect,
+				TextFormat("%0.*f", setting.precision, setting.value),
+				setting.name.c_str(),
+				setting.value,
+				setting.range.first,
+				setting.range.second
+			);
+			setting.value = value;
+			break;
+		case Flowfield::InputType::GUI_COLOR_PICKER:
+			this_rect.height *= 4;
+			index += 2;
+			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
+			c = GuiColorPicker(this_rect, "", c);
+			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
+			setting.string_value = ss.str();
+			break;
+		case Flowfield::InputType::GUI_TEXT_BOX:
+
+			*text = _strdup(setting.string_value.c_str());
+			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
+			{
+				setting.text_box_editable = !setting.text_box_editable;
+			}
+			setting.string_value = *text;
+			break;
+		default:
+			break;
+		}
+
+		// Tooltips
+		if (CheckCollisionPointRec(mouse_pos, this_rect))
+			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
 
 		index++;
-	}
-
-	// Display tooltips
-	int i = 0;
-	for (const auto& setting : s.user_settings)
-	{
-		Rectangle rect = { first_setting_rect.x, first_setting_rect.y + i * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		if (CheckCollisionPointRec(mouse_pos, rect))
-			DrawText(setting.tooltip.c_str(), mouse_pos.x, mouse_pos.y - 30, 20, DARKGRAY);
-		i++;
 	}
 	EndScissorMode();
 

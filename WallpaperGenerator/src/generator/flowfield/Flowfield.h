@@ -7,30 +7,13 @@
 class Flowfield : public Generator
 {
 public:
-	enum InputType
-	{
-		NONE = 0,
-		GUI_SLIDER_BAR,
-		GUI_COLOR_PICKER
-	};
-
-	struct Setting
-	{
-		std::string name;
-		float value;
-		int precision;
-		std::pair<float, float> range;
-		std::string tooltip;
-		int input_type;
-		std::string string_value = "";
-	};
 
 	std::vector<Setting> default_settings =
 	{
-		{ "Window Width", 1920, 0, { 2, 1920 }, "Final image horizontal resolution", InputType::GUI_SLIDER_BAR },
-		{ "Window Height", 1080, 0, { 2, 1080 }, "Final image vertical resolution", InputType::GUI_SLIDER_BAR },
+		{ "Window Width", 1920, 0, { 2, 1920 }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
+		{ "Window Height", 1080, 0, { 2, 1080 }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
+		{ "Seed", 69420, 0, {0, UINT32_MAX }, "Random noise seed", InputType::GUI_TEXT_BOX, "1234", false },
 		{ "Scale", 20, 0, { 2, 40 }, "Lower number = more detail, but worse performance", InputType::GUI_SLIDER_BAR },
-		{ "Seed", 69420, 0, {0, UINT32_MAX }, "Random noise seed", InputType::GUI_SLIDER_BAR },
 		{ "Flowfield Strength", 0.01f, 3, { 0.001f, 0.1f }, "How accurately particles follow the flowfield", InputType::GUI_SLIDER_BAR },
 		{ "Particle Count", 10000, 0, { 500, 50000 }, "Amount of particles", InputType::GUI_SLIDER_BAR },
 		{ "Particle Speed", 1.0f, 2, { 0, 2.0f }, "How quickly particles move", InputType::GUI_SLIDER_BAR },
@@ -48,8 +31,8 @@ public:
 
 	int window_width;
 	int window_height;
-	int scale;
 	siv::PerlinNoise::seed_type seed;
+	int scale;
 	float flowfield_strength;
 	int particle_count;
 	float particle_speed;
