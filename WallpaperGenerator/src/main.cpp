@@ -28,7 +28,7 @@ int main()
 		{
 			ClearBackground(RAYWHITE);
 			gui.Draw();
-			DrawFPS(20, 20);
+			//DrawFPS(20, 20);
 		}
 		EndDrawing();
 	}
