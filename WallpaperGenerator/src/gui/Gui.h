@@ -3,10 +3,8 @@
 #include <map>
 #include <array>
 #include <string>
-//#include "../generator/Generator.h"
 #include "../generator/flowfield/Flowfield.h"
 #include "../generator/shapes/Shapes.h"
-#include "../generator/Generator.h"
 class Gui
 {
 private:

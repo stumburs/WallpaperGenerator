@@ -1,6 +1,7 @@
 #include "Flowfield.h"
 #include "../../PerlinNoise.hpp"
 #include "../../Functions.h"
+#include <string>
 Flowfield::Flowfield()
 {
     Flowfield::Init();
@@ -20,11 +21,9 @@ void Flowfield::Init()
     x_mult = user_settings[9].value;
     y_mult = user_settings[10].value;
     z_mult = user_settings[11].value;
-    background_r = user_settings[12].value;
-    background_g = user_settings[13].value;
-    background_b = user_settings[14].value;
-    background_a = user_settings[15].value;
-    blend_mode = user_settings[16].value;
+    background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3)) };
+    background_a = user_settings[13].value;
+    blend_mode = user_settings[14].value;
 
     perlin.reseed(seed);
     render_width = window_width / scale + 1;
@@ -121,11 +120,9 @@ void Flowfield::ApplySettings()
     x_mult = user_settings[9].value;
     y_mult = user_settings[10].value;
     z_mult = user_settings[11].value;
-    background_r = user_settings[12].value;
-    background_g = user_settings[13].value;
-    background_b = user_settings[14].value;
-    background_a = user_settings[15].value;
-    blend_mode = user_settings[16].value;
+    background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3))};
+    background_a = user_settings[13].value;
+    blend_mode = user_settings[14].value;
 
     perlin.reseed(seed);
     render_width = window_width / scale + 1;
@@ -174,7 +171,7 @@ void Flowfield::ResetSettings()
 Texture2D Flowfield::GetImage()
 {
     BeginTextureMode(return_image);
-    ClearBackground({background_r, background_g, background_b, background_a});
+    ClearBackground({background_color.r, background_color.g, background_color.b, background_a});
     BeginBlendMode(blend_mode);
     DrawTexturePro(image.texture, { 0, 0, (float)image.texture.width, (float)image.texture.height }, { 0, 0, (float)return_image.texture.width, (float)return_image.texture.height }, { 0, 0 }, 0.0f, WHITE);
     EndBlendMode();

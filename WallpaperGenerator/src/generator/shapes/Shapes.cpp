@@ -1,6 +1,6 @@
 #include "Shapes.h"
-#include "../../Functions.h"
 #include <random>
+#include "../../Functions.h"
 
 Shapes::Shapes()
 {

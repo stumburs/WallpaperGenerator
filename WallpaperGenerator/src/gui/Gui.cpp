@@ -1,6 +1,9 @@
 #include "Gui.h"
 #include "raygui.h"
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <iomanip>
 Gui::Gui(int kWindowWidth, int kWindowHeight)
 {
 	this->kWindowWidth = kWindowWidth;
@@ -136,7 +139,7 @@ void Gui::FlowfieldScreen()
 {
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, (float)f.user_settings.size() * 63 }, &scroll_pos);
+	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
 	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
 
 	// Render and get values from sliders
@@ -144,8 +147,18 @@ void Gui::FlowfieldScreen()
 	for (auto& setting : f.user_settings)
 	{
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		
-		float value = GuiSliderBar(
+		float value{};
+		int color_as_int{};
+		Color c{};
+		std::string return_value = "";
+		std::stringstream ss(return_value);
+
+		switch (setting.input_type)
+		{
+		case Flowfield::InputType::NONE:
+			break;
+		case Flowfield::InputType::GUI_SLIDER_BAR:
+			value = GuiSliderBar(
 				this_rect,
 				TextFormat("%0.*f", setting.precision, setting.value),
 				setting.name.c_str(),
@@ -154,6 +167,18 @@ void Gui::FlowfieldScreen()
 				setting.range.second
 			);
 			setting.value = value;
+			break;
+		case Flowfield::InputType::GUI_COLOR_PICKER:
+			this_rect.height *= 4;
+			index += 2;
+			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
+			c = GuiColorPicker(this_rect, "", c);
+			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
+			setting.string_value = ss.str();
+			break;
+		default:
+			break;
+		}
 		
 		index++;
 	}
