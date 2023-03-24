@@ -1,6 +1,6 @@
 #include <raylib.h>
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#include "libraries/raygui-3.2/raygui.h"
 #undef RAYGUI_IMPLEMENTATION
 #include <iostream>
 #include "gui/Gui.h"

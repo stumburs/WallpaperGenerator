@@ -1,5 +1,5 @@
 #include "Gui.h"
-#include "raygui.h"
+#include "../libraries/raygui-3.2/raygui.h"
 #include <iostream>
 #include <string>
 #include <sstream>
