@@ -395,7 +395,7 @@ void Gui::VoronoiScreen()
 			setting.string_value = *text;
 			break;
 		case Voronoi::InputType::GUI_CHECK_BOX:
-			value = GuiCheckBox(this_rect, "Points", setting.value);
+			value = GuiCheckBox({this_rect.x, this_rect.y, this_rect.height, this_rect.height}, "Points", setting.value);
 			setting.value = value;
 			break;
 		default:
