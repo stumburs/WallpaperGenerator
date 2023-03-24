@@ -10,7 +10,8 @@ public:
 		NONE = 0,
 		GUI_SLIDER_BAR,
 		GUI_COLOR_PICKER,
-		GUI_TEXT_BOX
+		GUI_TEXT_BOX,
+		GUI_CHECK_BOX
 	};
 
 	struct Setting

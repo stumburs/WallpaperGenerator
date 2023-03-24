@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="src\generator\Generator.cpp" />
     <ClCompile Include="src\Functions.cpp" />
+    <ClCompile Include="src\generator\voronoi\Voronoi.cpp" />
     <ClCompile Include="src\gui\Gui.cpp" />
     <ClCompile Include="src\generator\flowfield\Flowfield.cpp" />
     <ClCompile Include="src\generator\flowfield\Particle.cpp" />
@@ -145,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="src\generator\Generator.h" />
     <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\generator\voronoi\Voronoi.h" />
     <ClInclude Include="src\gui\Gui.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\generator\flowfield\Flowfield.h" />

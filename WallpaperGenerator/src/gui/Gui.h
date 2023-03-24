@@ -5,18 +5,20 @@
 #include <string>
 #include "../generator/flowfield/Flowfield.h"
 #include "../generator/shapes/Shapes.h"
+#include "../generator/voronoi/Voronoi.h"
 class Gui
 {
 private:
 public:
 
-	const std::string version_number = "0.4-alpha";
+	const std::string version_number = "0.5-alpha";
 	const std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
 
 	Texture2D preview_texture{};
 
 	Flowfield f;
 	Shapes s;
+	Voronoi v;
 
 	int kWindowWidth;
 	int kWindowHeight;
@@ -31,6 +33,7 @@ public:
 	// Create menu
 	Rectangle flowfield_rect;
 	Rectangle shapes_rect;
+	Rectangle voronoi_rect;
 
 	// Generate
 	Rectangle preview_rect;
@@ -72,7 +75,8 @@ public:
 	{
 		NONE = 0,
 		FLOWFIELD,
-		SHAPES
+		SHAPES,
+		VORONOI
 	};
 	Rectangle first_setting_rect = { 110, 90, 400, 40 };
 
@@ -87,5 +91,6 @@ public:
 	void ViewScreen();
 	void FlowfieldScreen();
 	void ShapesScreen();
+	void VoronoiScreen();
 
 };
