@@ -13,12 +13,13 @@ Gui::Gui(int kWindowWidth, int kWindowHeight)
 	create_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
 	view_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
 	github_link_rect = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
-	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 100, 200, 100 };
+	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 300, 200, 100 };
 	back_rect_corner = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
 
 	// Create menu
 	flowfield_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
 	shapes_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
+	voronoi_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 + 100, 400, 100 };
 
 	// Generate
 	preview_rect = { (float)kWindowWidth - 850, 50, 800, 450 };
@@ -58,6 +59,9 @@ void Gui::Draw()
 		case Gui::ActiveGenerator::SHAPES:
 			ShapesScreen();
 			break;
+		case Gui::ActiveGenerator::VORONOI:
+			VoronoiScreen();
+			break;
 		default:
 			break;
 		}
@@ -82,6 +86,10 @@ void Gui::Update()
 	case Gui::ActiveGenerator::SHAPES:
 		this->preview_texture = s.GetImage();
 		s.Update();
+		break;
+	case Gui::ActiveGenerator::VORONOI:
+		this->preview_texture = v.GetImage();
+		v.Update();
 		break;
 	default:
 		break;
@@ -120,6 +128,11 @@ void Gui::CreateScreen()
 	{
 		active_menu = Menu::GENERATOR;
 		active_generator = Gui::ActiveGenerator::SHAPES;
+	}
+	if (GuiButton(voronoi_rect, "Voronoi"))
+	{
+		active_menu = Menu::GENERATOR;
+		active_generator = Gui::ActiveGenerator::VORONOI;
 	}
 	if (GuiButton(back_rect_center, "Back"))
 	{
@@ -254,9 +267,9 @@ void Gui::ShapesScreen()
 
 		switch (setting.input_type)
 		{
-		case Flowfield::InputType::NONE:
+		case Shapes::InputType::NONE:
 			break;
-		case Flowfield::InputType::GUI_SLIDER_BAR:
+		case Shapes::InputType::GUI_SLIDER_BAR:
 			value = GuiSliderBar(
 				this_rect,
 				TextFormat("%0.*f", setting.precision, setting.value),
@@ -267,7 +280,7 @@ void Gui::ShapesScreen()
 			);
 			setting.value = value;
 			break;
-		case Flowfield::InputType::GUI_COLOR_PICKER:
+		case Shapes::InputType::GUI_COLOR_PICKER:
 			this_rect.height *= 4;
 			index += 2;
 			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
@@ -275,7 +288,7 @@ void Gui::ShapesScreen()
 			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
 			setting.string_value = ss.str();
 			break;
-		case Flowfield::InputType::GUI_TEXT_BOX:
+		case Shapes::InputType::GUI_TEXT_BOX:
 
 			*text = _strdup(setting.string_value.c_str());
 			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
@@ -311,6 +324,107 @@ void Gui::ShapesScreen()
 
 	if (GuiButton(reset_settings, "Reset settings"))
 		s.ResetSettings();
+
+	// Apply shader
+	//if (shader_on)
+	//	BeginShaderMode(shader);
+
+	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
+	EndShaderMode();
+
+	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
+
+	if (GuiButton(back_rect_corner, "Back"))
+	{
+		active_menu = Menu::CREATE;
+		active_generator = Gui::ActiveGenerator::NONE;
+		SetTargetFPS(60);
+	}
+}
+
+void Gui::VoronoiScreen()
+{
+	Vector2 mouse_pos = GetMousePosition();
+
+	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
+	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
+
+	// Render and get values from sliders
+	int index = 0;
+	for (auto& setting : v.user_settings)
+	{
+		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
+		float value{};
+		int color_as_int{};
+		Color c{};
+		std::string return_value = "";
+		std::stringstream ss(return_value);
+
+		char* text[6]{};
+
+		switch (setting.input_type)
+		{
+		case Voronoi::InputType::NONE:
+			break;
+		case Voronoi::InputType::GUI_SLIDER_BAR:
+			value = GuiSliderBar(
+				this_rect,
+				TextFormat("%0.*f", setting.precision, setting.value),
+				setting.name.c_str(),
+				setting.value,
+				setting.range.first,
+				setting.range.second
+			);
+			setting.value = value;
+			break;
+		case Voronoi::InputType::GUI_COLOR_PICKER:
+			this_rect.height *= 4;
+			index += 2;
+			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
+			c = GuiColorPicker(this_rect, "", c);
+			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
+			setting.string_value = ss.str();
+			break;
+		case Voronoi::InputType::GUI_TEXT_BOX:
+
+			*text = _strdup(setting.string_value.c_str());
+			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
+			{
+				setting.text_box_editable = !setting.text_box_editable;
+			}
+			setting.string_value = *text;
+			break;
+		case Voronoi::InputType::GUI_CHECK_BOX:
+			value = GuiCheckBox(this_rect, "Points", setting.value);
+			setting.value = value;
+			break;
+		default:
+			break;
+		}
+
+		// Tooltips
+		if (CheckCollisionPointRec(mouse_pos, this_rect))
+			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
+
+		index++;
+	}
+	EndScissorMode();
+
+	if (GuiButton(save_image, "Save Image"))
+	{
+		Image img = LoadImageFromTexture(v.GetImage());
+		ImageFlipVertical(&img);
+		if (DirectoryExists("images"))
+			ExportImage(img, "images/image.png");
+		else
+		ExportImage(img, "image.png");
+	}
+
+	if (GuiButton(update_settings, "Apply settings"))
+		v.ApplySettings();
+
+	if (GuiButton(reset_settings, "Reset settings"))
+		v.ResetSettings();
 
 	// Apply shader
 	//if (shader_on)
