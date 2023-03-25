@@ -10,6 +10,11 @@ Flowfield::Flowfield()
     Flowfield::Init();
 }
 
+std::vector<Generator::Setting>& Flowfield::GetUserSettings()
+{
+    return user_settings;
+}
+
 void Flowfield::Init()
 {
     window_width = std::stoi(user_settings[0].string_value);

@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <string>
 #include <map>
+#include <vector>
 class Generator
 {
 public:
@@ -26,10 +27,13 @@ public:
 		bool text_box_editable = false;
 	};
 
+	std::vector<Setting> default_settings;
+
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void ApplySettings() = 0;
 	virtual void ResetSettings() = 0;
 	virtual Texture2D GetImage() = 0;
+	virtual std::vector<Setting>& GetUserSettings() = 0;
 	Color RGBFromString(std::string str);
 };

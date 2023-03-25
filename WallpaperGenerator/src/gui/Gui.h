@@ -89,8 +89,6 @@ public:
 	void MainMenuScreen();
 	void CreateScreen();
 	void ViewScreen();
-	void FlowfieldScreen();
-	void ShapesScreen();
-	void VoronoiScreen();
+	void GeneratorScreen(Generator &generator);
 
 };
