@@ -148,7 +148,7 @@ void Gui::ViewScreen()
 	OpenURL(url.c_str());
 }
 
-void Gui::GeneratorScreen(Generator &generator)
+void Gui::GeneratorScreen(Generator& generator)
 {
 	Vector2 mouse_pos = GetMousePosition();
 

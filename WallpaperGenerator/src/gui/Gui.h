@@ -89,6 +89,6 @@ public:
 	void MainMenuScreen();
 	void CreateScreen();
 	void ViewScreen();
-	void GeneratorScreen(Generator &generator);
+	void GeneratorScreen(Generator& generator);
 
 };
