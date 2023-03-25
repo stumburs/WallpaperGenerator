@@ -54,13 +54,13 @@ void Gui::Draw()
 		case Gui::ActiveGenerator::NONE:
 			break;
 		case Gui::ActiveGenerator::FLOWFIELD:
-			FlowfieldScreen();
+			GeneratorScreen(f);
 			break;
 		case Gui::ActiveGenerator::SHAPES:
-			ShapesScreen();
+			GeneratorScreen(s);
 			break;
 		case Gui::ActiveGenerator::VORONOI:
-			VoronoiScreen();
+			GeneratorScreen(v);
 			break;
 		default:
 			break;
@@ -148,7 +148,7 @@ void Gui::ViewScreen()
 	OpenURL(url.c_str());
 }
 
-void Gui::FlowfieldScreen()
+void Gui::GeneratorScreen(Generator &generator)
 {
 	Vector2 mouse_pos = GetMousePosition();
 
@@ -157,7 +157,7 @@ void Gui::FlowfieldScreen()
 
 	// Render and get values from sliders
 	int index = 0;
-	for (auto& setting : f.user_settings)
+	for (auto& setting : generator.GetUserSettings())
 	{
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
 		float value{};
@@ -170,9 +170,10 @@ void Gui::FlowfieldScreen()
 
 		switch (setting.input_type)
 		{
-		case Flowfield::InputType::NONE:
+		case Generator::InputType::NONE:
 			break;
-		case Flowfield::InputType::GUI_SLIDER_BAR:
+
+		case Generator::InputType::GUI_SLIDER_BAR:
 			value = GuiSliderBar(
 				this_rect,
 				TextFormat("%0.*f", setting.precision, setting.value),
@@ -183,7 +184,8 @@ void Gui::FlowfieldScreen()
 			);
 			setting.value = value;
 			break;
-		case Flowfield::InputType::GUI_COLOR_PICKER:
+
+		case Generator::InputType::GUI_COLOR_PICKER:
 			this_rect.height *= 4;
 			index += 2;
 			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
@@ -191,8 +193,8 @@ void Gui::FlowfieldScreen()
 			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
 			setting.string_value = ss.str();
 			break;
-		case Flowfield::InputType::GUI_TEXT_BOX:
-			
+
+		case Generator::InputType::GUI_TEXT_BOX:
 			*text = _strdup(setting.string_value.c_str());
 			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
 			{
@@ -200,6 +202,12 @@ void Gui::FlowfieldScreen()
 			}
 			setting.string_value = *text;
 			break;
+
+		case Generator::InputType::GUI_CHECK_BOX:
+			value = GuiCheckBox({ this_rect.x, this_rect.y, this_rect.height, this_rect.height }, "Points", setting.value);
+			setting.value = value;
+			break;
+
 		default:
 			break;
 		}
@@ -207,15 +215,14 @@ void Gui::FlowfieldScreen()
 		// Tooltips
 		if (CheckCollisionPointRec(mouse_pos, this_rect))
 			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
-		
+
 		index++;
 	}
-
 	EndScissorMode();
 
 	if (GuiButton(save_image, "Save Image"))
 	{
-		Image img = LoadImageFromTexture(f.GetImage());
+		Image img = LoadImageFromTexture(generator.GetImage());
 		ImageFlipVertical(&img);
 		if (DirectoryExists("images"))
 			ExportImage(img, "images/image.png");
@@ -224,207 +231,10 @@ void Gui::FlowfieldScreen()
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
-		f.ApplySettings();
+		generator.ApplySettings();
 
 	if (GuiButton(reset_settings, "Reset settings"))
-		f.ResetSettings();
-
-	// Apply shader
-	//if (shader_on)
-	//	BeginShaderMode(shader);
-	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
-	//EndShaderMode();
-
-	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
-
-	if (GuiButton(back_rect_corner, "Back"))
-	{
-		active_menu = Menu::CREATE;
-		active_generator = Gui::ActiveGenerator::NONE;
-		SetTargetFPS(60);
-	}
-}
-
-void Gui::ShapesScreen()
-{
-	Vector2 mouse_pos = GetMousePosition();
-
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
-	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
-
-	// Render and get values from sliders
-	int index = 0;
-	for (auto& setting : s.user_settings)
-	{
-		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		float value{};
-		int color_as_int{};
-		Color c{};
-		std::string return_value = "";
-		std::stringstream ss(return_value);
-
-		char* text[6]{};
-
-		switch (setting.input_type)
-		{
-		case Shapes::InputType::NONE:
-			break;
-		case Shapes::InputType::GUI_SLIDER_BAR:
-			value = GuiSliderBar(
-				this_rect,
-				TextFormat("%0.*f", setting.precision, setting.value),
-				setting.name.c_str(),
-				setting.value,
-				setting.range.first,
-				setting.range.second
-			);
-			setting.value = value;
-			break;
-		case Shapes::InputType::GUI_COLOR_PICKER:
-			this_rect.height *= 4;
-			index += 2;
-			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
-			c = GuiColorPicker(this_rect, "", c);
-			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
-			setting.string_value = ss.str();
-			break;
-		case Shapes::InputType::GUI_TEXT_BOX:
-
-			*text = _strdup(setting.string_value.c_str());
-			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
-			{
-				setting.text_box_editable = !setting.text_box_editable;
-			}
-			setting.string_value = *text;
-			break;
-		default:
-			break;
-		}
-
-		// Tooltips
-		if (CheckCollisionPointRec(mouse_pos, this_rect))
-			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
-
-		index++;
-	}
-	EndScissorMode();
-
-	if (GuiButton(save_image, "Save Image"))
-	{
-		Image img = LoadImageFromTexture(s.GetImage());
-		ImageFlipVertical(&img);
-		if (DirectoryExists("images"))
-			ExportImage(img, "images/image.png");
-		else
-			ExportImage(img, "image.png");
-	}
-
-	if (GuiButton(update_settings, "Apply settings"))
-		s.ApplySettings();
-
-	if (GuiButton(reset_settings, "Reset settings"))
-		s.ResetSettings();
-
-	// Apply shader
-	//if (shader_on)
-	//	BeginShaderMode(shader);
-
-	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
-	EndShaderMode();
-
-	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
-
-	if (GuiButton(back_rect_corner, "Back"))
-	{
-		active_menu = Menu::CREATE;
-		active_generator = Gui::ActiveGenerator::NONE;
-		SetTargetFPS(60);
-	}
-}
-
-void Gui::VoronoiScreen()
-{
-	Vector2 mouse_pos = GetMousePosition();
-
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
-	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
-
-	// Render and get values from sliders
-	int index = 0;
-	for (auto& setting : v.user_settings)
-	{
-		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		float value{};
-		int color_as_int{};
-		Color c{};
-		std::string return_value = "";
-		std::stringstream ss(return_value);
-
-		char* text[6]{};
-
-		switch (setting.input_type)
-		{
-		case Voronoi::InputType::NONE:
-			break;
-		case Voronoi::InputType::GUI_SLIDER_BAR:
-			value = GuiSliderBar(
-				this_rect,
-				TextFormat("%0.*f", setting.precision, setting.value),
-				setting.name.c_str(),
-				setting.value,
-				setting.range.first,
-				setting.range.second
-			);
-			setting.value = value;
-			break;
-		case Voronoi::InputType::GUI_COLOR_PICKER:
-			this_rect.height *= 4;
-			index += 2;
-			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
-			c = GuiColorPicker(this_rect, "", c);
-			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
-			setting.string_value = ss.str();
-			break;
-		case Voronoi::InputType::GUI_TEXT_BOX:
-
-			*text = _strdup(setting.string_value.c_str());
-			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
-			{
-				setting.text_box_editable = !setting.text_box_editable;
-			}
-			setting.string_value = *text;
-			break;
-		case Voronoi::InputType::GUI_CHECK_BOX:
-			value = GuiCheckBox({this_rect.x, this_rect.y, this_rect.height, this_rect.height}, "Points", setting.value);
-			setting.value = value;
-			break;
-		default:
-			break;
-		}
-
-		// Tooltips
-		if (CheckCollisionPointRec(mouse_pos, this_rect))
-			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
-
-		index++;
-	}
-	EndScissorMode();
-
-	if (GuiButton(save_image, "Save Image"))
-	{
-		Image img = LoadImageFromTexture(v.GetImage());
-		ImageFlipVertical(&img);
-		if (DirectoryExists("images"))
-			ExportImage(img, "images/image.png");
-		else
-		ExportImage(img, "image.png");
-	}
-
-	if (GuiButton(update_settings, "Apply settings"))
-		v.ApplySettings();
-
-	if (GuiButton(reset_settings, "Reset settings"))
-		v.ResetSettings();
+		generator.ResetSettings();
 
 	// Apply shader
 	//if (shader_on)

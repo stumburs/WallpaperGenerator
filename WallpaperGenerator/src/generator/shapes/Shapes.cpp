@@ -7,6 +7,11 @@ Shapes::Shapes()
     Shapes::Init();
 }
 
+std::vector<Generator::Setting>& Shapes::GetUserSettings()
+{
+    return user_settings;
+}
+
 void Shapes::Init()
 {
     try

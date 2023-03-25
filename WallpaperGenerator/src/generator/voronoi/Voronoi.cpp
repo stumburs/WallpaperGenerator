@@ -8,6 +8,10 @@ Voronoi::Voronoi()
     Voronoi::GenerateRandomSeeds();
 }
 
+std::vector<Generator::Setting>& Voronoi::GetUserSettings()
+{
+    return user_settings;
+}
 
 void Voronoi::GenerateRandomSeeds()
 {

@@ -72,6 +72,7 @@ public:
 	void Update();
 	void ApplySettings();
 	void ResetSettings();
+	std::vector<Setting>& GetUserSettings();
 	Texture2D GetImage();
 };
 
