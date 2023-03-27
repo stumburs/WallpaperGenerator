@@ -31,8 +31,8 @@ void Shapes::Init()
 	}
 	catch (const std::exception&) {}
 	background_color = { (unsigned char)std::stoi(user_settings[4].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(6, 3)), 255 };
-	shape_alpha = user_settings[5].value;
-	blend_mode = user_settings[6].value;
+	shape_alpha = static_cast<int>(user_settings[5].value);
+	blend_mode = static_cast<int>(user_settings[6].value);
 	shapes_drawn = 0;
 
 	// Init texture
@@ -49,10 +49,10 @@ void Shapes::Update()
 	// Draw to texture
 	while (shapes_drawn < shapes_amount)
 	{
-		Color c = { rand() % 256, rand() % 256, rand() % 256, shape_alpha };
+		Color c = { static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(shape_alpha) };
 		BeginTextureMode(image);
 		BeginBlendMode(blend_mode);
-		DrawPoly({ (float)(rand() % window_width), (float)(rand() % window_height) }, rand() % 8 + 2, rand() % 100 + 100, rand() % 100 * 0.1, c);
+		DrawPoly({ (float)(rand() % window_width), (float)(rand() % window_height) }, static_cast<int>(rand() % 8 + 2), static_cast<float>(rand() % 100 + 100), static_cast<float>(rand() % 100 * 0.1f), c);
 		shapes_drawn++;
 		EndBlendMode();
 		EndTextureMode();
@@ -78,8 +78,8 @@ void Shapes::ApplySettings()
 	}
 	catch (const std::exception&) {}
 	background_color = { (unsigned char)std::stoi(user_settings[4].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(6, 3)), 255 };
-	shape_alpha = user_settings[5].value;
-	blend_mode = user_settings[6].value;
+	shape_alpha = static_cast<int>(user_settings[5].value);
+	blend_mode = static_cast<int>(user_settings[6].value);
 	shapes_drawn = 0;
 
 	// Init texture

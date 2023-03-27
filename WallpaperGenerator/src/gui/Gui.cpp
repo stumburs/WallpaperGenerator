@@ -153,7 +153,7 @@ void Gui::GeneratorScreen(Generator& generator)
 	Vector2 mouse_pos = GetMousePosition();
 
 	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
-	BeginScissorMode(scissor_area.x, scissor_area.y, scissor_area.width, scissor_area.height);
+	BeginScissorMode(static_cast<int>(scissor_area.x), static_cast<int>(scissor_area.y), static_cast<int>(scissor_area.width), static_cast<int>(scissor_area.height));
 
 	// Render and get values from sliders
 	int index = 0;
@@ -214,7 +214,7 @@ void Gui::GeneratorScreen(Generator& generator)
 
 		// Tooltips
 		if (CheckCollisionPointRec(mouse_pos, this_rect))
-			DrawText(setting.tooltip.c_str(), mouse_pos.x - 50, mouse_pos.y - 30, 20, DARKGRAY);
+			DrawText(setting.tooltip.c_str(), static_cast<int>(mouse_pos.x - 50), static_cast<int>(mouse_pos.y - 30), 20, DARKGRAY);
 
 		index++;
 	}

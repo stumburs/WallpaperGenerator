@@ -28,7 +28,7 @@ public:
 		bright_orange
 	};
 
-	int palette_count = palette.size();
+	size_t palette_count = palette.size();
 
 	std::vector<Setting> default_settings =
 	{

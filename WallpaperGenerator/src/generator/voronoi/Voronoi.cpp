@@ -19,7 +19,7 @@ void Voronoi::GenerateRandomSeeds()
 	srand(seed);
 	for (int i = 0; i < seed_count; i++)
 	{
-		Vector2 pos = { rand() % window_width, rand() % window_width };
+		Vector2 pos = { static_cast<float>(rand() % window_width), static_cast<float>(rand() % window_width) };
 		seeds.push_back(pos);
 	}
 }
@@ -45,7 +45,7 @@ void Voronoi::Update()
 				int j = 0;
 				for (int i = 0; i < seed_count; i++)
 				{
-					if (SqrDist(seeds[i].x, seeds[i].y, x, y) < SqrDist(seeds[j].x, seeds[j].y, x, y))
+					if (SqrDist(static_cast<int>(seeds[i].x), static_cast<int>(seeds[i].y), x, y) < SqrDist(static_cast<int>(seeds[j].x), static_cast<int>(seeds[j].y), x, y))
 					{
 						j = i;
 					}
@@ -57,8 +57,8 @@ void Voronoi::Update()
 
 		if (render_points)
 		{
-			for (Vector2 const& seed : seeds)
-				DrawCircle(seed.x, seed.y, 4, BLACK);
+			for (Vector2 seed : seeds)
+				DrawCircle(static_cast<int>(seed.x), static_cast<int>(seed.y), 4, BLACK);
 		}
 		EndTextureMode();
 		rendered = true;
