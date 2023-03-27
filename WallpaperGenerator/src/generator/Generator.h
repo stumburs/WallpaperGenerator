@@ -35,5 +35,5 @@ public:
 	virtual void ResetSettings() = 0;
 	virtual Texture2D GetImage() = 0;
 	virtual std::vector<Setting>& GetUserSettings() = 0;
-	Color RGBFromString(std::string str);
+	Color RGBFromString(const std::string& str);
 };

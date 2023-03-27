@@ -2,11 +2,11 @@
 #include <raylib.h>
 #include <raymath.h>
 
-double Map(const double& n, const double& start1, const double& stop1, const double& start2, const double& stop2);
+double Map(double n, double start1, double stop1, double start2, double stop2);
 
-Vector2 Vec2FromAngle(const float& angle);
+Vector2 Vec2FromAngle(float angle);
 
-Vector2 SetMagnitude(const Vector2& v, const float& magnitude);
+Vector2 SetMagnitude(Vector2 v, float magnitude);
 
 float SimpleLerp(float a, float b, float f);
 
