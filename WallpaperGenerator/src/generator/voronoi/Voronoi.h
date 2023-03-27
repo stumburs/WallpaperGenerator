@@ -32,11 +32,11 @@ public:
 
 	std::vector<Setting> default_settings =
 	{
-		{ "Window Width", 1920, 0, { 2, 1920 }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
-		{ "Window Height", 1080, 0, { 2, 1080 }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
-		{ "Seed", 69420, 0, {0, UINT32_MAX }, "Random noise seed", InputType::GUI_TEXT_BOX, "69420", false },
-		{ "Seed Count", 20, 0, { 1, 100 }, "Amount of seeds for diagram", InputType::GUI_TEXT_BOX, "20", false },
-		{ "Render Points", 1, 0, { 0, 1 }, "Whether to render points", InputType::GUI_CHECK_BOX, "1", false }
+		{ "Window Width", 1920, 0, std::pair{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
+		{ "Window Height", 1080, 0, std::pair{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
+		{ "Seed", 69420, 0, std::pair{static_cast<float>(0), static_cast<float>(UINT32_MAX)}, "Random noise seed", InputType::GUI_TEXT_BOX, "69420", false},
+		{ "Seed Count", 20, 0, std::pair{ static_cast<float>(1), static_cast<float>(100) }, "Amount of seeds for diagram", InputType::GUI_TEXT_BOX, "20", false },
+		{ "Render Points", 1, 0, std::pair{ static_cast<float>(0), static_cast<float>(1) }, "Whether to render points", InputType::GUI_CHECK_BOX, "1", false }
 	};
 
 	std::vector<Setting> user_settings = default_settings;
