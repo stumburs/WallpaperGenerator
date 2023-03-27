@@ -28,8 +28,9 @@ public:
 	};
 
 	std::vector<Setting> default_settings;
+	std::vector<Setting> user_settings;
 
-	virtual void Init() = 0;
+	//virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void ApplySettings() = 0;
 	virtual void ResetSettings() = 0;

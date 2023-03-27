@@ -7,97 +7,37 @@
 #include <iostream>
 Flowfield::Flowfield()
 {
-	Flowfield::Init();
+	default_settings =
+	{
+		{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
+		{ "Window Height", 1080, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
+		{ "Seed", 69420, 0, std::pair<float, float>{static_cast<float>(0), static_cast<float>(UINT32_MAX) }, "Random noise seed", InputType::GUI_TEXT_BOX, "1234", false },
+		{ "Scale", 20, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(40) }, "Lower number = more detail, but worse performance", InputType::GUI_SLIDER_BAR },
+		{ "Flowfield Strength", 0.01f, 3, std::pair<float, float>{ 0.001f, 0.1f }, "How accurately particles follow the flowfield", InputType::GUI_SLIDER_BAR },
+		{ "Particle Count", 10000, 0, std::pair<float, float>{ static_cast<float>(500), static_cast<float>(50000) }, "Amount of particles", InputType::GUI_SLIDER_BAR },
+		{ "Particle Speed", 1.0f, 2, std::pair<float, float>{ static_cast<float>(0), 2.0f }, "How quickly particles move", InputType::GUI_SLIDER_BAR },
+		{ "Particle Strength", 3, 0, std::pair<float, float>{ static_cast<float>(3), static_cast<float>(255) }, "Particle color intensity", InputType::GUI_SLIDER_BAR },
+		{ "Noise Detail", 4, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(16) }, "Perlin noise octaves. Higher number = worse performance", InputType::GUI_SLIDER_BAR },
+		{ "X Multiplier", 0.02f, 2, std::pair{ 0.01f, 0.3f }, "Noise x-axis multiplier", InputType::GUI_SLIDER_BAR },
+		{ "Y Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise y-axis multiplier", InputType::GUI_SLIDER_BAR },
+		{ "Z Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise z-axis multiplier", InputType::GUI_SLIDER_BAR },
+		{ "Background Color", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Background color", InputType::GUI_COLOR_PICKER, "000000000"},
+		{ "Background A", 255, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255) }, "Background color transparency", InputType::GUI_SLIDER_BAR },
+		{ "Top", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Left particle color", InputType::GUI_COLOR_PICKER, "255000000"}, // Actually left
+		{ "Bottom", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Right particle color", InputType::GUI_COLOR_PICKER, "000255000"}, // Actually right
+		{ "Left", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Bottom particle color", InputType::GUI_COLOR_PICKER, "000000255"}, // Actually bottom
+		{ "Right", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Top particle color", InputType::GUI_COLOR_PICKER, "255000255"}, // Actually top
+		{ "Blend Mode", BlendMode::BLEND_ALPHA_PREMULTIPLY, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(5) }, "Particle and background image blending.", InputType::GUI_SLIDER_BAR}
+	};
+
+	user_settings = default_settings;
+
+	Flowfield::ApplySettings();
 }
 
 std::vector<Generator::Setting>& Flowfield::GetUserSettings()
 {
 	return user_settings;
-}
-
-void Flowfield::Init()
-{
-	window_width = std::stoi(user_settings[0].string_value);
-	window_height = std::stoi(user_settings[1].string_value);
-	seed = std::stoi(user_settings[2].string_value);
-	scale = static_cast<int>(user_settings[3].value);
-	flowfield_strength = user_settings[4].value;
-	particle_count = static_cast<int>(user_settings[5].value);
-	particle_speed = user_settings[6].value;
-	particle_strength = static_cast<unsigned char>(user_settings[7].value);
-	noise_detail = static_cast<int>(user_settings[8].value);
-	x_mult = user_settings[9].value;
-	y_mult = user_settings[10].value;
-	z_mult = user_settings[11].value;
-	background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3)) };
-	background_a = static_cast<unsigned char>(user_settings[13].value);
-	top = { (unsigned char)std::stoi(user_settings[14].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(6, 3)), 255 };
-	bottom = { (unsigned char)std::stoi(user_settings[15].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(6, 3)), 255 };
-	left = { (unsigned char)std::stoi(user_settings[16].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(6, 3)), 255 };
-	right = { (unsigned char)std::stoi(user_settings[17].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(6, 3)), 255 };
-	blend_mode = static_cast<int>(user_settings[18].value);
-
-	perlin.reseed(seed);
-	render_width = window_width / scale + 1;
-	render_height = window_height / scale + 1;
-	z = 0;
-
-	color_vector.clear();
-	// Init color vector to white
-	for (int x = 0; x < window_height; x++)
-	{
-		std::vector<Color> y_vec;
-		for (int y = 0; y < window_width; y++)
-		{
-			Color top_to_bottom = { 0 };
-			top_to_bottom.r = static_cast<unsigned char>(SimpleLerp((float)top.r, (float)bottom.r, static_cast<float>(Map(x, 0, window_height - 1, 0, 1))));
-			top_to_bottom.g = static_cast<unsigned char>(SimpleLerp((float)top.g, (float)bottom.g, static_cast<float>(Map(x, 0, window_height - 1, 0, 1))));
-			top_to_bottom.b = static_cast<unsigned char>(SimpleLerp((float)top.b, (float)bottom.b, static_cast<float>(Map(x, 0, window_height - 1, 0, 1))));
-
-			Color left_to_right = { 0 };
-			left_to_right.r = static_cast<unsigned char>(SimpleLerp((float)left.r, (float)right.r, static_cast<float>(Map(y, 0, window_width - 1, 0, 1))));
-			left_to_right.g = static_cast<unsigned char>(SimpleLerp((float)left.g, (float)right.g, static_cast<float>(Map(y, 0, window_width - 1, 0, 1))));
-			left_to_right.b = static_cast<unsigned char>(SimpleLerp((float)left.b, (float)right.b, static_cast<float>(Map(y, 0, window_width - 1, 0, 1))));
-
-			Color result = { 0 };
-			result.r = static_cast<unsigned char>(SimpleClamp(((int)left_to_right.r + (int)top_to_bottom.r) / 2, 0, 255));
-			result.g = static_cast<unsigned char>(SimpleClamp(((int)left_to_right.g + (int)top_to_bottom.g) / 2, 0, 255));
-			result.b = static_cast<unsigned char>(SimpleClamp(((int)left_to_right.b + (int)top_to_bottom.b) / 2, 0, 255));
-			result.a = particle_strength;
-			y_vec.push_back({ result });
-		}
-		color_vector.push_back(y_vec);
-	}
-
-	// Particles
-	particles.clear();
-	for (int i = 0; i < particle_count; i++)
-	{
-		Particle p{};
-		p.pos = { (float)GetRandomValue(0, window_width), (float)GetRandomValue(0, window_height) };
-		particles.push_back(p);
-	}
-
-	// Flowfield
-	flowfield.clear();
-	for (int x = 0; x < render_width; x++)
-	{
-		flowfield.push_back(std::vector<Vector2>());
-		for (int y = 0; y < render_height; y++)
-		{
-			// Calculate each vector
-			float angle = (float)Map(perlin.octave3D_01((x * x_mult), (y * y_mult), (z * z_mult), noise_detail), 0, 1, 0, 359);
-			Vector2 vec = Vec2FromAngle(angle);
-			vec = SetMagnitude(vec, 1);
-			flowfield[x].push_back(vec);
-		}
-	}
-
-	image = LoadRenderTexture(window_width, window_height);
-	return_image = LoadRenderTexture(window_width, window_height);
-	BeginTextureMode(image);
-	ClearBackground(BLANK);
-	EndTextureMode();
 }
 
 void Flowfield::Update()
@@ -129,12 +69,6 @@ void Flowfield::Update()
 		{
 			Color c = particles[i].GetColorAtPos(color_vector);
 			particles[i].DrawPixel(c);
-			/*particles[i].DrawPixel({
-				(unsigned char)Map(particles[i].pos.y, 0, window_height, 255, 128),
-				0,
-				(unsigned char)Map(particles[i].pos.y, 0, window_height , 128, 255),
-				particle_strength });*/
-
 		}
 	}
 	EndTextureMode();
@@ -208,12 +142,6 @@ void Flowfield::ApplySettings()
 		}
 		color_vector.push_back(y_vec);
 	}
-
-	//std::cout << "TOP: " << static_cast<unsigned>(top.r) << " " << static_cast<unsigned>(top.g) << " " << static_cast<unsigned>(top.b) << " " << static_cast<unsigned>(top.a) << "\n";
-	//std::cout << "BOTTOM: " << static_cast<unsigned>(bottom.r) << " " << static_cast<unsigned>(bottom.g) << " " << static_cast<unsigned>(bottom.b) << " " << static_cast<unsigned>(bottom.a) << "\n";
-	//std::cout << "LEFT: " << static_cast<unsigned>(left.r) << " " << static_cast<unsigned>(left.g) << " " << static_cast<unsigned>(left.b) << " " << static_cast<unsigned>(left.a) << "\n";
-	//std::cout << "RIGHT: " << static_cast<unsigned>(right.r) << " " << static_cast<unsigned>(right.g) << " " << static_cast<unsigned>(right.b) << " " << static_cast<unsigned>(right.a) << "\n";
-
 
 	// Particles
 	particles.clear();

@@ -4,8 +4,16 @@
 
 Voronoi::Voronoi()
 {
-	Voronoi::Init();
-	Voronoi::GenerateRandomSeeds();
+	default_settings =
+	{
+		{ "Window Width", 1920, 0, std::pair{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
+		{ "Window Height", 1080, 0, std::pair{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
+		{ "Seed", 69420, 0, std::pair{static_cast<float>(0), static_cast<float>(UINT32_MAX)}, "Random noise seed", InputType::GUI_TEXT_BOX, "69420", false},
+		{ "Seed Count", 20, 0, std::pair{ static_cast<float>(1), static_cast<float>(100) }, "Amount of seeds for diagram", InputType::GUI_TEXT_BOX, "20", false },
+		{ "Render Points", 1, 0, std::pair{ static_cast<float>(0), static_cast<float>(1) }, "Whether to render points", InputType::GUI_CHECK_BOX, "1", false }
+	};
+	user_settings = default_settings;
+	Voronoi::ApplySettings();
 }
 
 std::vector<Generator::Setting>& Voronoi::GetUserSettings()
@@ -63,35 +71,6 @@ void Voronoi::Update()
 		EndTextureMode();
 		rendered = true;
 	}
-}
-
-void Voronoi::Init()
-{
-	try
-	{
-		window_width = std::stoi(user_settings[0].string_value);
-		window_height = std::stoi(user_settings[1].string_value);
-	}
-	catch (const std::exception&) {}
-	try
-	{
-		seed = std::stoi(user_settings[2].string_value);
-	}
-	catch (const std::exception&) {}
-	try
-	{
-		seed_count = std::stoi(user_settings[3].string_value);
-	}
-	catch (const std::exception&) {}
-	render_points = user_settings[4].value;
-	rendered = false;
-
-	// Init texture
-	UnloadRenderTexture(image);
-	image = LoadRenderTexture(window_width, window_height);
-	BeginTextureMode(image);
-	ClearBackground(BLACK);
-	EndTextureMode();
 }
 
 void Voronoi::ApplySettings()
