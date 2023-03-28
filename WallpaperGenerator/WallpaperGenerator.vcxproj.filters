@@ -65,8 +65,5 @@
     <ClInclude Include="src\generator\voronoi\Voronoi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gui\BgImage1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
