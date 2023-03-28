@@ -27,7 +27,7 @@ void Voronoi::GenerateRandomSeeds()
 	srand(seed);
 	for (int i = 0; i < seed_count; i++)
 	{
-		Vector2 pos = { static_cast<float>(rand() % window_width), static_cast<float>(rand() % window_width) };
+		Vector2 pos = { static_cast<float>(rand() % window_width), static_cast<float>(rand() % window_height) };
 		seeds.push_back(pos);
 	}
 }
