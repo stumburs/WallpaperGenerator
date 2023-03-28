@@ -147,6 +147,7 @@
     <ClInclude Include="src\generator\Generator.h" />
     <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\generator\voronoi\Voronoi.h" />
+    <ClInclude Include="src\gui\BgImage1.h" />
     <ClInclude Include="src\gui\Gui.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\generator\flowfield\Flowfield.h" />

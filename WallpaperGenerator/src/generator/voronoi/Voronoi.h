@@ -25,7 +25,7 @@ private:
 		bright_blue,
 		bright_purple,
 		bright_aqua,
-		bright_orange
+		bright_orange,
 	};
 
 	size_t palette_count = palette.size();
@@ -41,9 +41,10 @@ private:
 
 	RenderTexture2D image;
 
-public:
 	void GenerateRandomSeeds();
 	int SqrDist(int x1, int y1, int x2, int y2);
+
+public:
 	Voronoi();
 	void Update();
 	void ApplySettings();

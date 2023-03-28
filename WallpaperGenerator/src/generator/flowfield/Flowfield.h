@@ -33,7 +33,6 @@ private:
 	float noise_height;
 	float z;
 
-
 	siv::PerlinNoise perlin;
 	std::vector<std::vector<Vector2>> flowfield;
 	std::vector<Particle> particles;

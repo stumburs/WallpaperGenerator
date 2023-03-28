@@ -10,26 +10,39 @@ Gui::Gui(int kWindowWidth, int kWindowHeight)
 	this->kWindowHeight = kWindowHeight;
 
 	// Main menu
-	create_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
-	view_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
-	github_link_rect = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
-	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 300, 200, 100 };
-	back_rect_corner = { (float)kWindowWidth - 120, (float)kWindowHeight - 60 , 100, 40 };
+	create_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2, 200, 50 };
+	view_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 75, 200, 50 };
+	github_link_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 150 , 200, 50 };
+	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 150 , 200, 50 };
 
 	// Create menu
-	flowfield_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 - 50, 400, 100 };
-	shapes_rect = { (float)kWindowWidth / 2 + 50, (float)kWindowHeight / 2 - 50, 400, 100 };
-	voronoi_rect = { (float)kWindowWidth / 2 - 450, (float)kWindowHeight / 2 + 100, 400, 100 };
+	flowfield_rect = { (float)kWindowWidth / 2 - 225, (float)kWindowHeight / 2, 200, 50 };
+	shapes_rect = { (float)kWindowWidth / 2 + 25, (float)kWindowHeight / 2, 200, 50 };
+	voronoi_rect = { (float)kWindowWidth / 2 - 225, (float)kWindowHeight / 2 + 75, 200, 50 };
 
 	// Generate
 	preview_rect = { (float)kWindowWidth - 850, 50, 800, 450 };
 	shader_checkbox = { (float)kWindowWidth - 850, 525, 40, 40 };
 	blend_slider = { (float)kWindowWidth - 650, 525, 400, 40 };
-	save_image = { (float)kWindowWidth - 800, 585, 160, 40 };
-	update_settings = { (float)kWindowWidth - 800, 645, 160, 40 };
-	reset_settings = { (float)kWindowWidth - 600, 645, 160, 40 };
+
+	// Row 1
+	update_settings = { (float)kWindowWidth - 800, 585, 160, 40 };
+	reset_settings = { (float)kWindowWidth - 600, 585, 160, 40 };
+	// Row 2
+	save_image = { (float)kWindowWidth - 800, 645, 160, 40 };
+	// Row 3
+	// Row 4
+	back_rect_corner = { (float)kWindowWidth - 800, 765, 160, 40 };
 
 	scroll_pos = { 0 };
+
+	//background_image_img.format = EXPORT_FORMAT;
+	//background_image_img.height = EXPORT_HEIGHT;
+	//background_image_img.width = EXPORT_WIDTH;
+	//background_image_img.data = EXPORT_DATA;
+	//background_image_img.mipmaps = 1;
+
+	//background_image = LoadTextureFromImage(background_image_img);
 
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 }
@@ -98,6 +111,9 @@ void Gui::Update()
 
 void Gui::MainMenuScreen()
 {
+	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
+	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
+	//DrawTexturePro(background_image, { 0, 0, 1599, 900 }, { 0, 0, 1600, 900 }, { 0, 0 }, 0.0f, WHITE);
 	if (GuiButton(create_rect, "Create"))
 	{
 		active_menu = Menu::CREATE;
@@ -107,7 +123,8 @@ void Gui::MainMenuScreen()
 		ViewScreen();
 	}
 
-	DrawText(version_number.c_str(), kWindowWidth - MeasureText(version_number.c_str(), 20) - 160, kWindowHeight - 50, 20, BLACK);
+	DrawText(version_number.c_str(), kWindowWidth / 2 - MeasureText(version_number.c_str(), 20) / 2 + 2, kWindowHeight / 2 - 128, 20, BLACK);
+	DrawText(version_number.c_str(), kWindowWidth / 2 - MeasureText(version_number.c_str(), 20) / 2, kWindowHeight / 2 - 130, 20, RAYWHITE);
 
 	if (GuiButton(github_link_rect, "GitHub"))
 	{
@@ -118,6 +135,9 @@ void Gui::MainMenuScreen()
 
 void Gui::CreateScreen()
 {
+	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
+	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
+	//DrawTexturePro(background_image, { 0, 0, 1599, 900 }, { 0, 0, 1600, 900 }, { 0, 0 }, 0.0f, WHITE);
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
@@ -152,7 +172,7 @@ void Gui::GeneratorScreen(Generator& generator)
 {
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 50, 650, 800 }, NULL, { 50, 50, 635, 2000 }, &scroll_pos);
+	Rectangle scissor_area = GuiScrollPanel({ 50, 45, 655, 800 }, "Settings", {50, 50, 635, 2000}, &scroll_pos);
 	BeginScissorMode(static_cast<int>(scissor_area.x), static_cast<int>(scissor_area.y), static_cast<int>(scissor_area.width), static_cast<int>(scissor_area.height));
 
 	// Render and get values from sliders
@@ -240,6 +260,7 @@ void Gui::GeneratorScreen(Generator& generator)
 	//if (shader_on)
 	//	BeginShaderMode(shader);
 
+	DrawRectangle(preview_rect.x - 5, preview_rect.y - 5, preview_rect.width + 10, preview_rect.height + 10, RAYWHITE);
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();
 

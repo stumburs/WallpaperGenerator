@@ -6,12 +6,12 @@
 #include "../generator/flowfield/Flowfield.h"
 #include "../generator/shapes/Shapes.h"
 #include "../generator/voronoi/Voronoi.h"
+//#include "BgImage1.h"
 class Gui
 {
 private:
-public:
 
-	const std::string version_number = "0.5-alpha";
+	const std::string version_number = "0.6-alpha";
 	const std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
 
 	Texture2D preview_texture{};
@@ -63,6 +63,9 @@ public:
 
 	Vector2 scroll_pos;
 
+	//Image background_image_img;
+	//Texture background_image;
+
 	enum Menu
 	{
 		MAIN = 0,
@@ -83,6 +86,7 @@ public:
 	int active_menu = Menu::MAIN;
 	int active_generator = Gui::ActiveGenerator::NONE;
 
+public:
 	Gui(int kWindowWidth, int kWindowHeight);
 	void Draw();
 	void Update();
