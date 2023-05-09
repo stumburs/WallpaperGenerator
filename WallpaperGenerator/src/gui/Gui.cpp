@@ -61,23 +61,7 @@ void Gui::Draw()
 		ViewScreen();
 		break;
 	case Gui::Menu::GENERATOR:
-
-		switch (active_generator)
-		{
-		case Gui::ActiveGenerator::NONE:
-			break;
-		case Gui::ActiveGenerator::FLOWFIELD:
-			GeneratorScreen(f);
-			break;
-		case Gui::ActiveGenerator::SHAPES:
-			GeneratorScreen(s);
-			break;
-		case Gui::ActiveGenerator::VORONOI:
-			GeneratorScreen(v);
-			break;
-		default:
-			break;
-		}
+		GeneratorScreen(generators);
 		break;
 
 	default:
@@ -90,23 +74,8 @@ void Gui::Update()
 	if (active_generator == Gui::ActiveGenerator::NONE)
 		return;
 
-	switch (active_generator)
-	{
-	case Gui::ActiveGenerator::FLOWFIELD:
-		this->preview_texture = f.GetImage();
-		f.Update();
-		break;
-	case Gui::ActiveGenerator::SHAPES:
-		this->preview_texture = s.GetImage();
-		s.Update();
-		break;
-	case Gui::ActiveGenerator::VORONOI:
-		this->preview_texture = v.GetImage();
-		v.Update();
-		break;
-	default:
-		break;
-	}
+	this->preview_texture = generators.GetImage();
+	generators.Update();
 }
 
 void Gui::MainMenuScreen()
@@ -141,17 +110,20 @@ void Gui::CreateScreen()
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
+		generators.SetActiveGenerator(Generators::GeneratorList::kFlowfield);
 		active_generator = Gui::ActiveGenerator::FLOWFIELD;
 		SetTargetFPS(0);
 	}
 	if (GuiButton(shapes_rect, "Shapes"))
 	{
 		active_menu = Menu::GENERATOR;
+		generators.SetActiveGenerator(Generators::GeneratorList::kShapes);
 		active_generator = Gui::ActiveGenerator::SHAPES;
 	}
 	if (GuiButton(voronoi_rect, "Voronoi"))
 	{
 		active_menu = Menu::GENERATOR;
+		generators.SetActiveGenerator(Generators::GeneratorList::kVoronoi);
 		active_generator = Gui::ActiveGenerator::VORONOI;
 	}
 	if (GuiButton(back_rect_center, "Back"))
@@ -168,7 +140,7 @@ void Gui::ViewScreen()
 	OpenURL(url.c_str());
 }
 
-void Gui::GeneratorScreen(Generator& generator)
+void Gui::GeneratorScreen(Generators& generators)
 {
 	Vector2 mouse_pos = GetMousePosition();
 
@@ -177,7 +149,7 @@ void Gui::GeneratorScreen(Generator& generator)
 
 	// Render and get values from sliders
 	int index = 0;
-	for (auto& setting : generator.GetUserSettings())
+	for (auto& setting : generators.GetUserSettings())
 	{
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
 		float value{};
@@ -242,7 +214,7 @@ void Gui::GeneratorScreen(Generator& generator)
 
 	if (GuiButton(save_image, "Save Image"))
 	{
-		Image img = LoadImageFromTexture(generator.GetImage());
+		Image img = LoadImageFromTexture(generators.GetImage());
 		ImageFlipVertical(&img);
 		if (DirectoryExists("images"))
 			ExportImage(img, "images/image.png");
@@ -251,10 +223,10 @@ void Gui::GeneratorScreen(Generator& generator)
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
-		generator.ApplySettings();
+		generators.ApplySettings();
 
 	if (GuiButton(reset_settings, "Reset settings"))
-		generator.ResetSettings();
+		generators.ResetSettings();
 
 	// Apply shader
 	//if (shader_on)

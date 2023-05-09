@@ -3,22 +3,18 @@
 #include <map>
 #include <array>
 #include <string>
-#include "../generator/flowfield/Flowfield.h"
-#include "../generator/shapes/Shapes.h"
-#include "../generator/voronoi/Voronoi.h"
+#include "../generator/Generators.h"
 //#include "BgImage1.h"
 class Gui
 {
 private:
 
-	const std::string version_number = "0.6-alpha";
+	const std::string version_number = "0.7-alpha";
 	const std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
 
 	Texture2D preview_texture{};
 
-	Flowfield f;
-	Shapes s;
-	Voronoi v;
+	Generators generators;
 
 	int kWindowWidth;
 	int kWindowHeight;
@@ -93,6 +89,6 @@ public:
 	void MainMenuScreen();
 	void CreateScreen();
 	void ViewScreen();
-	void GeneratorScreen(Generator& generator);
+	void GeneratorScreen(Generators& generators);
 
 };
