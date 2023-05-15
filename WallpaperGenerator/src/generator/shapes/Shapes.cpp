@@ -1,10 +1,15 @@
 #include "Shapes.h"
 #include <random>
 #include "../../Functions.h"
+#include "../../json/JSONReader.h"
 
 Shapes::Shapes()
 {
-	default_settings =
+	std::cout << "Shapes\n";
+	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
+	std::cout << "Attempting to load shapes.json\n";
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/shapes.json"));
+	/*default_settings =
 	{
 		{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
 		{ "Window Height", 1080, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
@@ -13,16 +18,26 @@ Shapes::Shapes()
 		{ "Background Color", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Background color", InputType::GUI_COLOR_PICKER, "000000000"},
 		{ "Shape Alpha", 255, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(255) }, "How transparent each shape is", InputType::GUI_SLIDER_BAR  },
 		{ "Blend Mode", BlendMode::BLEND_ADDITIVE, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(5) }, "Particle and background image blending."}
-	};
+	};*/
 
 	user_settings = default_settings;
 
 	Shapes::ApplySettings();
 }
 
-std::vector<Generator::Setting>& Shapes::GetUserSettings()
+std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& Shapes::GetUserSettings()
 {
 	return user_settings;
+}
+
+void Shapes::InitializeDefaultVariablesFromSettings()
+{
+	window_width = std::get<float>(default_settings.second["Window Width"].value);
+	window_height = std::get<float>(default_settings.second["Window Height"].value);
+	seed = std::get<float>(default_settings.second["Seed"].value);
+	shapes_amount = std::get<float>(default_settings.second["Shapes Amount"].value);
+	background_color = std::get<Color>(default_settings.second["Background Color"].value);
+	shape_alpha = std::get<float>(default_settings.second["Shape Alpha"].value);
 }
 
 void Shapes::Update()
@@ -33,7 +48,7 @@ void Shapes::Update()
 	{
 		Color c = { static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(rand() % 256), static_cast<unsigned char>(shape_alpha) };
 		BeginTextureMode(image);
-		BeginBlendMode(blend_mode);
+		BeginBlendMode(BlendMode::BLEND_ALPHA_PREMULTIPLY);
 		DrawPoly({ (float)(rand() % window_width), (float)(rand() % window_height) }, static_cast<int>(rand() % 8 + 2), static_cast<float>(rand() % 100 + 100), static_cast<float>(rand() % 100 * 0.1f), c);
 		shapes_drawn++;
 		EndBlendMode();
@@ -43,25 +58,6 @@ void Shapes::Update()
 
 void Shapes::ApplySettings()
 {
-	try
-	{
-		window_width = std::stoi(user_settings[0].string_value);
-		window_height = std::stoi(user_settings[1].string_value);
-	}
-	catch (const std::exception&) {}
-	try
-	{
-		seed = std::stoi(user_settings[2].string_value);
-	}
-	catch (const std::exception&) {}
-	try
-	{
-		shapes_amount = std::stoi(user_settings[3].string_value);
-	}
-	catch (const std::exception&) {}
-	background_color = { (unsigned char)std::stoi(user_settings[4].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[4].string_value.substr(6, 3)), 255 };
-	shape_alpha = static_cast<int>(user_settings[5].value);
-	blend_mode = static_cast<int>(user_settings[6].value);
 	shapes_drawn = 0;
 
 	// Init texture

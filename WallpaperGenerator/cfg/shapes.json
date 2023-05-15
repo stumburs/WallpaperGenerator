@@ -1,0 +1,45 @@
+{
+  "window_width": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Width",
+    "tooltip": "Final image horizontal resolution",
+    "value": 1920
+  },
+  "window_height": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Height",
+    "tooltip": "Final image vertical resolution",
+    "value": 1080
+  },
+  "seed": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Seed",
+    "tooltip": "Random noise seed",
+    "value": 1234
+  },
+  "shapes_amount": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Shapes Amount",
+    "tooltip": "Amount of shapes to draw",
+    "value": 20,
+    "precision": 0,
+    "range": [ 1, 100 ]
+  },
+  "background_color": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Background Color",
+    "tooltip": "Background color",
+    "value": [ 0, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "shape_alpha": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Shape Alpha",
+    "tooltip": "How transparent each shape is",
+    "value": 255,
+    "range": [ 1, 255 ]
+  }
+}

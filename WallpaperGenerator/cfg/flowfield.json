@@ -1,0 +1,149 @@
+{
+  "window_width": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Width",
+    "tooltip": "Final image horizontal resolution",
+    "value": 1920
+  },
+  "window_height": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Height",
+    "tooltip": "Final image vertical resolution",
+    "value": 1080
+  },
+  "seed": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Seed",
+    "tooltip": "Random noise seed",
+    "value": 1234
+  },
+  "scale": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Scale",
+    "tooltip": "Lower number = more detail, but worse performance",
+    "value": 20,
+    "precision": 0,
+    "range": [ 2, 40 ]
+  },
+  "flowfield_strength": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Flowfield Strength",
+    "tooltip": "How accurately particles follow the flowfield",
+    "value": 0.01,
+    "precision": 3,
+    "range": [ 0.001, 0.1 ]
+  },
+  "particle_count": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Particle Count",
+    "tooltip": "Amount of particles",
+    "value": 10000,
+    "precision": 0,
+    "range": [ 500, 50000 ]
+  },
+  "particle_speed": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Particle Speed",
+    "tooltip": "How quickly the particles move",
+    "value": 1.0,
+    "precision": 2,
+    "range": [ 0, 2.0 ]
+  },
+  "particle_strength": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Particle Strength",
+    "tooltip": "Particle color intensity",
+    "value": 3,
+    "precision": 0,
+    "range": [ 1, 255 ]
+  },
+  "noise_detail": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Noise Detail",
+    "tooltip": "Perlin noise octaves. Higher number = worse performance",
+    "value": 4,
+    "precision": 0,
+    "range": [ 1, 16 ]
+  },
+  "x_multiplier": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "X Multiplier",
+    "tooltip": "Noise x-axis multiplier",
+    "value": 0.02,
+    "precision": 2,
+    "range": [ 0.01, 0.3 ]
+  },
+  "y_multiplier": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Y Multiplier",
+    "tooltip": "Noise y-axis multiplier",
+    "value": 0.02,
+    "precision": 2,
+    "range": [ 0.01, 0.3 ]
+  },
+  "z_multiplier": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Z Multiplier",
+    "tooltip": "Noise z-axis multiplier",
+    "value": 0.02,
+    "precision": 2,
+    "range": [ 0.01, 0.3 ]
+  },
+  "background_color": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Background Color",
+    "tooltip": "Background color",
+    "value": [ 0, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "background_a": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Background A",
+    "tooltip": "Background color transparency",
+    "value": 255,
+    "range": [ 0, 255 ]
+  },
+  "left": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Left",
+    "tooltip": "Left particle color",
+    "value": [ 255, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "right": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Right",
+    "tooltip": "Right particle color",
+    "value": [ 0, 255, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "bottom": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Bottom",
+    "tooltip": "Bottom particle color",
+    "value": [ 0, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "top": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Top",
+    "tooltip": "Top particle color",
+    "value": [ 255, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  }
+}

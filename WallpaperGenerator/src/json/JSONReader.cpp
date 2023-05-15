@@ -1,4 +1,5 @@
 #include "JSONReader.h"
+#include <filesystem>
 
 int JSONReader::StringToInputType(std::string str)
 {
@@ -57,12 +58,20 @@ std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::S
 		}
 		settings[setting["name"]] = s;
 		insertion_order.push_back(setting["name"]);
+		std::cout << setting["name"] << '\n';
 	}
+	std::cout << '\n';
 	return std::make_pair(insertion_order, settings);
 }
 
 std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>> JSONReader::LoadSettingsFromJson(std::string path)
 {
+	std::filesystem::path fs_path = std::filesystem::current_path() / path;
+	std::cout << "File path: " << fs_path << std::endl;
+	std::cout << "Got path: " << path << '\n';
 	std::ifstream file(path);
-	return LoadSettingsFromJson(json::parse(file));
+	std::cout << "file opened succesfully: " << std::boolalpha << file.is_open() << '\n';
+	json j = json::parse(file);
+	std::cout << "parsed file\n";
+	return LoadSettingsFromJson(j);
 }

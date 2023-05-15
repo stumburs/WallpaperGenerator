@@ -1,0 +1,35 @@
+{
+  "window_width": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Width",
+    "tooltip": "Final image horizontal resolution",
+    "value": 1920
+  },
+  "window_height": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Height",
+    "tooltip": "Final image vertical resolution",
+    "value": 1080
+  },
+  "seed": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Seed",
+    "tooltip": "Random noise seed",
+    "value": 1234
+  },
+  "seed_count": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Seed Count",
+    "tooltip": "Amount of seeds for diagram",
+    "value": 20,
+    "precision": 0,
+    "range": [ 1, 100 ]
+  },
+  "render_points": {
+    "input_type": "GUI_CHECK_BOX",
+    "name": "Render Points",
+    "tooltip": "Whether to render points",
+    "value": 1,
+    "range": [ 0, 1 ]
+  }
+}

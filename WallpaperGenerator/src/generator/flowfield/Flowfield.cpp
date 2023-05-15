@@ -8,7 +8,11 @@
 #include "../../json/JSONReader.h"
 Flowfield::Flowfield()
 {
-	default_settings = JSONReader::LoadSettingsFromJson(std::string("funny_json_path.json"));
+	std::cout << "Flowfield\n";
+	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
+	std::cout << "Attempting to load flowfield.json\n";
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/flowfield.json"));
+	
 	//default_settings =
 	//{
 	//	{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
