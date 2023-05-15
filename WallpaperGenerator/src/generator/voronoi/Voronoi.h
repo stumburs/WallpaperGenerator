@@ -49,7 +49,7 @@ public:
 	void Update();
 	void ApplySettings();
 	void ResetSettings();
-	std::vector<Setting>& GetUserSettings();
+	std::unordered_map<std::string, Generator::Setting>& GetUserSettings();
 	Texture2D GetImage();
 };
 

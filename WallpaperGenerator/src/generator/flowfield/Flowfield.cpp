@@ -5,37 +5,62 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include "../../json/JSONReader.h"
 Flowfield::Flowfield()
 {
-	default_settings =
-	{
-		{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
-		{ "Window Height", 1080, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
-		{ "Seed", 69420, 0, std::pair<float, float>{static_cast<float>(0), static_cast<float>(UINT32_MAX) }, "Random noise seed", InputType::GUI_TEXT_BOX, "1234", false },
-		{ "Scale", 20, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(40) }, "Lower number = more detail, but worse performance", InputType::GUI_SLIDER_BAR },
-		{ "Flowfield Strength", 0.01f, 3, std::pair<float, float>{ 0.001f, 0.1f }, "How accurately particles follow the flowfield", InputType::GUI_SLIDER_BAR },
-		{ "Particle Count", 10000, 0, std::pair<float, float>{ static_cast<float>(500), static_cast<float>(50000) }, "Amount of particles", InputType::GUI_SLIDER_BAR },
-		{ "Particle Speed", 1.0f, 2, std::pair<float, float>{ static_cast<float>(0), 2.0f }, "How quickly particles move", InputType::GUI_SLIDER_BAR },
-		{ "Particle Strength", 3, 0, std::pair<float, float>{ static_cast<float>(3), static_cast<float>(255) }, "Particle color intensity", InputType::GUI_SLIDER_BAR },
-		{ "Noise Detail", 4, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(16) }, "Perlin noise octaves. Higher number = worse performance", InputType::GUI_SLIDER_BAR },
-		{ "X Multiplier", 0.02f, 2, std::pair{ 0.01f, 0.3f }, "Noise x-axis multiplier", InputType::GUI_SLIDER_BAR },
-		{ "Y Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise y-axis multiplier", InputType::GUI_SLIDER_BAR },
-		{ "Z Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise z-axis multiplier", InputType::GUI_SLIDER_BAR },
-		{ "Background Color", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Background color", InputType::GUI_COLOR_PICKER, "000000000"},
-		{ "Background A", 255, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255) }, "Background color transparency", InputType::GUI_SLIDER_BAR },
-		{ "Top", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Left particle color", InputType::GUI_COLOR_PICKER, "255000000"}, // Actually left
-		{ "Bottom", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Right particle color", InputType::GUI_COLOR_PICKER, "000255000"}, // Actually right
-		{ "Left", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Bottom particle color", InputType::GUI_COLOR_PICKER, "000000255"}, // Actually bottom
-		{ "Right", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Top particle color", InputType::GUI_COLOR_PICKER, "255000255"}, // Actually top
-		{ "Blend Mode", BlendMode::BLEND_ALPHA_PREMULTIPLY, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(5) }, "Particle and background image blending.", InputType::GUI_SLIDER_BAR}
-	};
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("funny_json_path.json"));
+	//default_settings =
+	//{
+	//	{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
+	//	{ "Window Height", 1080, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
+	//	{ "Seed", 69420, 0, std::pair<float, float>{static_cast<float>(0), static_cast<float>(UINT32_MAX) }, "Random noise seed", InputType::GUI_TEXT_BOX, "1234", false },
+	//	{ "Scale", 20, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(40) }, "Lower number = more detail, but worse performance", InputType::GUI_SLIDER_BAR },
+	//	{ "Flowfield Strength", 0.01f, 3, std::pair<float, float>{ 0.001f, 0.1f }, "How accurately particles follow the flowfield", InputType::GUI_SLIDER_BAR },
+	//	{ "Particle Count", 10000, 0, std::pair<float, float>{ static_cast<float>(500), static_cast<float>(50000) }, "Amount of particles", InputType::GUI_SLIDER_BAR },
+	//	{ "Particle Speed", 1.0f, 2, std::pair<float, float>{ static_cast<float>(0), 2.0f }, "How quickly particles move", InputType::GUI_SLIDER_BAR },
+	//	{ "Particle Strength", 3, 0, std::pair<float, float>{ static_cast<float>(3), static_cast<float>(255) }, "Particle color intensity", InputType::GUI_SLIDER_BAR },
+	//	{ "Noise Detail", 4, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(16) }, "Perlin noise octaves. Higher number = worse performance", InputType::GUI_SLIDER_BAR },
+	//	{ "X Multiplier", 0.02f, 2, std::pair{ 0.01f, 0.3f }, "Noise x-axis multiplier", InputType::GUI_SLIDER_BAR },
+	//	{ "Y Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise y-axis multiplier", InputType::GUI_SLIDER_BAR },
+	//	{ "Z Multiplier", 0.02f, 2, std::pair<float, float>{ 0.01f, 0.3f }, "Noise z-axis multiplier", InputType::GUI_SLIDER_BAR },
+	//	{ "Background Color", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Background color", InputType::GUI_COLOR_PICKER, "000000000"},
+	//	{ "Background A", 255, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255) }, "Background color transparency", InputType::GUI_SLIDER_BAR },
+	//	{ "Top", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Left particle color", InputType::GUI_COLOR_PICKER, "255000000"}, // Actually left
+	//	{ "Bottom", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Right particle color", InputType::GUI_COLOR_PICKER, "000255000"}, // Actually right
+	//	{ "Left", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Bottom particle color", InputType::GUI_COLOR_PICKER, "000000255"}, // Actually bottom
+	//	{ "Right", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Top particle color", InputType::GUI_COLOR_PICKER, "255000255"}, // Actually top
+	//	{ "Blend Mode", BlendMode::BLEND_ALPHA_PREMULTIPLY, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(5) }, "Particle and background image blending.", InputType::GUI_SLIDER_BAR}
+	//};
 
 	user_settings = default_settings;
 
+	Flowfield::InitializeDefaultVariablesFromSettings();
 	Flowfield::ApplySettings();
 }
 
-std::vector<Generator::Setting>& Flowfield::GetUserSettings()
+void Flowfield::InitializeDefaultVariablesFromSettings()
+{
+	window_width = std::get<float>(default_settings.second["Window Width"].value);
+	window_height = std::get<float>(default_settings.second["Window Height"].value);
+	seed = std::get<float>(default_settings.second["Seed"].value);
+	scale = std::get<float>(default_settings.second["Scale"].value);
+	flowfield_strength = std::get<float>(default_settings.second["Flowfield Strength"].value);
+	particle_count = std::get<float>(default_settings.second["Particle Count"].value);
+	particle_speed = std::get<float>(default_settings.second["Particle Speed"].value);
+	particle_strength = std::get<float>(default_settings.second["Particle Strength"].value);
+	noise_detail = std::get<float>(default_settings.second["Noise Detail"].value);
+	x_mult = std::get<float>(default_settings.second["X Multiplier"].value);
+	y_mult = std::get<float>(default_settings.second["Y Multiplier"].value);
+	z_mult = std::get<float>(default_settings.second["Z Multiplier"].value);
+	background_color = std::get<Color>(default_settings.second["Background Color"].value);
+	background_a = std::get<float>(default_settings.second["Background A"].value);
+	top = std::get<Color>(default_settings.second["Top"].value);
+	bottom = std::get<Color>(default_settings.second["Bottom"].value);
+	left = std::get<Color>(default_settings.second["Left"].value);
+	right = std::get<Color>(default_settings.second["Right"].value);
+}
+
+std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& Flowfield::GetUserSettings()
 {
 	return user_settings;
 }
@@ -79,35 +104,6 @@ void Flowfield::Update()
 
 void Flowfield::ApplySettings()
 {
-	try
-	{
-		window_width = std::stoi(user_settings[0].string_value);
-		window_height = std::stoi(user_settings[1].string_value);
-	}
-	catch (const std::exception&) {}
-
-	try
-	{
-		seed = std::stoi(user_settings[2].string_value);
-	}
-	catch (const std::exception&) {}
-	scale = static_cast<int>(user_settings[3].value);
-	flowfield_strength = user_settings[4].value;
-	particle_count = static_cast<int>(user_settings[5].value);
-	particle_speed = user_settings[6].value;
-	particle_strength = static_cast<unsigned char>(user_settings[7].value);
-	noise_detail = static_cast<int>(user_settings[8].value);
-	x_mult = user_settings[9].value;
-	y_mult = user_settings[10].value;
-	z_mult = user_settings[11].value;
-	background_color = { (unsigned char)std::stoi(user_settings[12].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[12].string_value.substr(6, 3)) };
-	background_a = static_cast<unsigned char>(user_settings[13].value);
-	top = { (unsigned char)std::stoi(user_settings[14].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[14].string_value.substr(6, 3)), 255 };
-	bottom = { (unsigned char)std::stoi(user_settings[15].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[15].string_value.substr(6, 3)), 255 };
-	left = { (unsigned char)std::stoi(user_settings[16].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[16].string_value.substr(6, 3)), 255 };
-	right = { (unsigned char)std::stoi(user_settings[17].string_value.substr(0, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(3, 3)), (unsigned char)std::stoi(user_settings[17].string_value.substr(6, 3)), 255 };
-	blend_mode = static_cast<unsigned char>(user_settings[18].value);
-
 	perlin.reseed(seed);
 	render_width = window_width / scale + 1;
 	render_height = window_height / scale + 1;
@@ -186,7 +182,7 @@ Texture2D Flowfield::GetImage()
 {
 	BeginTextureMode(return_image);
 	ClearBackground({ background_color.r, background_color.g, background_color.b, background_a });
-	BeginBlendMode(blend_mode);
+	BeginBlendMode(BlendMode::BLEND_ALPHA_PREMULTIPLY);
 	DrawTexturePro(image.texture, { 0, 0, (float)image.texture.width, (float)image.texture.height }, { 0, 0, (float)return_image.texture.width, (float)return_image.texture.height }, { 0, 0 }, 0.0f, WHITE);
 	EndBlendMode();
 	EndTextureMode();

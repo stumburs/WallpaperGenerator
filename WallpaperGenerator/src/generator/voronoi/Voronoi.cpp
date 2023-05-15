@@ -1,9 +1,11 @@
 #include "Voronoi.h"
 #include <random>
 #include "../../Functions.h"
+#include "../../json/JSONReader.h"
 
 Voronoi::Voronoi()
 {
+	//default_settings = JSONReader::LoadSettingsFromJson()
 	default_settings =
 	{
 		{ "Window Width", 1920, 0, std::pair{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
