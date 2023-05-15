@@ -149,10 +149,10 @@ void Gui::GeneratorScreen(Generators& generators)
 
 	// Render and get values from sliders
 	int index = 0;
-	//for (auto& [insertion_order, setting] : generators.GetUserSettings())
-	for (std::size_t i = 0; i < generators.GetUserSettings().first.size(); i++)
+	for (std::string& setting_name : generators.GetUserSettings().first)
+	//for (std::size_t i = 0; i < generators.GetUserSettings().first.size(); i++)
 	{
-		std::string setting_name = generators.GetUserSettings().first[i];
+		//std::string setting_name = generators.GetUserSettings().first[i];
 		Generator::Setting setting = generators.GetUserSettings().second.at(setting_name);
 
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
@@ -170,15 +170,14 @@ void Gui::GeneratorScreen(Generators& generators)
 			break;
 
 		case Generator::InputType::GUI_SLIDER_BAR:
-			value = GuiSliderBar(
+			generators.GetUserSettings().second.at(setting_name).value = GuiSliderBar(
 				this_rect,
-				TextFormat("%0.*f", setting.precision, setting.value),
+				TextFormat("%0.*f", setting.precision, std::get<float>(setting.value)),
 				setting_name.c_str(),
 				std::get<float>(setting.value),
 				std::get<float>(setting.range.first),
 				std::get<float>(setting.range.second)
 			);
-			setting.value = value;
 			break;
 
 		case Generator::InputType::GUI_COLOR_PICKER:
@@ -186,8 +185,8 @@ void Gui::GeneratorScreen(Generators& generators)
 			index += 2;
 			c = std::get<Color>(setting.value);
 			c = GuiColorPicker(this_rect, "", c);
-			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
-			//setting.string_value = ss.str();
+			//ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
+			setting.value = c;
 			break;
 
 		case Generator::InputType::GUI_TEXT_BOX:

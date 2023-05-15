@@ -130,7 +130,7 @@
     "input_type": "GUI_COLOR_PICKER",
     "name": "Bottom",
     "tooltip": "Bottom particle color",
-    "value": [ 0, 0, 0, 255 ],
+    "value": [ 0, 0, 255, 255 ],
     "range": [
       [ 0, 0, 0, 0 ],
       [ 255, 255, 255, 255 ]
@@ -140,7 +140,7 @@
     "input_type": "GUI_COLOR_PICKER",
     "name": "Top",
     "tooltip": "Top particle color",
-    "value": [ 255, 0, 0, 255 ],
+    "value": [ 255, 0, 255, 255 ],
     "range": [
       [ 0, 0, 0, 0 ],
       [ 255, 255, 255, 255 ]
