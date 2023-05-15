@@ -150,9 +150,7 @@ void Gui::GeneratorScreen(Generators& generators)
 	// Render and get values from sliders
 	int index = 0;
 	for (std::string& setting_name : generators.GetUserSettings().first)
-	//for (std::size_t i = 0; i < generators.GetUserSettings().first.size(); i++)
 	{
-		//std::string setting_name = generators.GetUserSettings().first[i];
 		Generator::Setting setting = generators.GetUserSettings().second.at(setting_name);
 
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
@@ -183,10 +181,7 @@ void Gui::GeneratorScreen(Generators& generators)
 		case Generator::InputType::GUI_COLOR_PICKER:
 			this_rect.height *= 4;
 			index += 2;
-			c = std::get<Color>(setting.value);
-			c = GuiColorPicker(this_rect, "", c);
-			//ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
-			setting.value = c;
+			generators.GetUserSettings().second.at(setting_name).value = GuiColorPicker(this_rect, "", std::get<Color>(setting.value));
 			break;
 
 		case Generator::InputType::GUI_TEXT_BOX:
