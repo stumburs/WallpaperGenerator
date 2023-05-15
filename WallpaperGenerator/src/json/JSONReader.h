@@ -9,7 +9,7 @@
 
 namespace JSONReader
 {
-	using json = nlohmann::json;
+	using json = nlohmann::ordered_json;
 
 	// Converts a string to the appropriate Enum value inside InputType
 	int StringToInputType(std::string str);
