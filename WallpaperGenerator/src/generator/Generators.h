@@ -22,7 +22,7 @@ public:
 	void Update();
 	void ApplySettings();
 	void ResetSettings();
-	std::vector<Generator::Setting>& GetUserSettings();
+	std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& GetUserSettings();
 	Texture2D GetImage();
 private:
 	std::vector<std::unique_ptr<Generator>> generators;

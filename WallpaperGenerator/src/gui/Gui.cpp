@@ -144,13 +144,17 @@ void Gui::GeneratorScreen(Generators& generators)
 {
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 45, 655, 800 }, "Settings", {50, 50, 635, 2000}, &scroll_pos);
+	Rectangle scissor_area = GuiScrollPanel({ 50, 45, 655, 800 }, "Settings", { 50, 50, 635, 2000 }, &scroll_pos);
 	BeginScissorMode(static_cast<int>(scissor_area.x), static_cast<int>(scissor_area.y), static_cast<int>(scissor_area.width), static_cast<int>(scissor_area.height));
 
 	// Render and get values from sliders
 	int index = 0;
-	for (auto& setting : generators.GetUserSettings())
+	//for (auto& [insertion_order, setting] : generators.GetUserSettings())
+	for (std::size_t i = 0; i < generators.GetUserSettings().first.size(); i++)
 	{
+		std::string setting_name = generators.GetUserSettings().first[i];
+		Generator::Setting setting = generators.GetUserSettings().second.at(setting_name);
+
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
 		float value{};
 		int color_as_int{};
@@ -169,10 +173,10 @@ void Gui::GeneratorScreen(Generators& generators)
 			value = GuiSliderBar(
 				this_rect,
 				TextFormat("%0.*f", setting.precision, setting.value),
-				setting.name.c_str(),
-				setting.value,
-				setting.range.first,
-				setting.range.second
+				setting_name.c_str(),
+				std::get<float>(setting.value),
+				std::get<float>(setting.range.first),
+				std::get<float>(setting.range.second)
 			);
 			setting.value = value;
 			break;
@@ -180,25 +184,26 @@ void Gui::GeneratorScreen(Generators& generators)
 		case Generator::InputType::GUI_COLOR_PICKER:
 			this_rect.height *= 4;
 			index += 2;
-			c = { (unsigned char)std::stoi(setting.string_value.substr(0, 3)), (unsigned char)std::stoi(setting.string_value.substr(3, 3)), (unsigned char)std::stoi(setting.string_value.substr(6, 3)) };
+			c = std::get<Color>(setting.value);
 			c = GuiColorPicker(this_rect, "", c);
 			ss << std::setfill('0') << std::setw(3) << (int)c.r << std::setfill('0') << std::setw(3) << (int)c.g << std::setfill('0') << std::setw(3) << (int)c.b;
-			setting.string_value = ss.str();
+			//setting.string_value = ss.str();
 			break;
 
 		case Generator::InputType::GUI_TEXT_BOX:
-			*text = _strdup(setting.string_value.c_str());
+			//*text = _strdup(setting.string_value.c_str());
+			*text = _strdup("1234");
 			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
 			{
 				setting.text_box_editable = !setting.text_box_editable;
 			}
-			setting.string_value = *text;
+			//setting.string_value = *text;
 			break;
 
-		case Generator::InputType::GUI_CHECK_BOX:
-			value = GuiCheckBox({ this_rect.x, this_rect.y, this_rect.height, this_rect.height }, "Points", setting.value);
-			setting.value = value;
-			break;
+		//case Generator::InputType::GUI_CHECK_BOX:
+		//	value = GuiCheckBox({ this_rect.x, this_rect.y, this_rect.height, this_rect.height }, "Points", setting.value);
+		//	setting.value = value;
+		//	break;
 
 		default:
 			break;
