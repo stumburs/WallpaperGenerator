@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <limits>
 Gui::Gui(int kWindowWidth, int kWindowHeight)
 {
 	this->kWindowWidth = kWindowWidth;
@@ -154,13 +155,12 @@ void Gui::GeneratorScreen(Generators& generators)
 		Generator::Setting setting = generators.GetUserSettings().second.at(setting_name);
 
 		Rectangle this_rect = { first_setting_rect.x, first_setting_rect.y + index * 60 + scroll_pos.y, first_setting_rect.width, first_setting_rect.height };
-		float value{};
-		int color_as_int{};
-		Color c{};
-		std::string return_value = "";
-		std::stringstream ss(return_value);
 
 		char* text[6]{};
+		std::stringstream ss;
+
+		float float_value = 0.0;
+		int int_value = 0;
 
 		switch (setting.input_type)
 		{
@@ -185,19 +185,49 @@ void Gui::GeneratorScreen(Generators& generators)
 			break;
 
 		case Generator::InputType::GUI_TEXT_BOX:
-			//*text = _strdup(setting.string_value.c_str());
-			*text = _strdup("1234");
-			if (GuiTextBox(this_rect, *text, 7, setting.text_box_editable))
+			float_value = std::get<float>(generators.GetUserSettings().second.at(setting_name).value);
+			if (std::isnan(float_value))
 			{
-				setting.text_box_editable = !setting.text_box_editable;
+				*text = _strdup("");
 			}
-			//setting.string_value = *text;
+			else
+			{
+				int_value = static_cast<int>(float_value);
+				ss << int_value;
+				*text = _strdup(ss.str().c_str());
+			}
+
+			std::cout << "Editable before gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n';
+			if (GuiTextBox(this_rect, *text, 7, generators.GetUserSettings().second.at(setting_name).text_box_editable))
+			{
+				generators.GetUserSettings().second.at(setting_name).text_box_editable = !generators.GetUserSettings().second.at(setting_name).text_box_editable;
+
+				std::cout << "Editable inside gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n';
+			}
+
+			try
+			{
+				if (*text && *text[0])
+				{
+					// Convert the non-empty text to a float value
+					generators.GetUserSettings().second.at(setting_name).value = std::stof(*text);
+				}
+				else
+				{
+					// Set the value to NaN for empty text
+					generators.GetUserSettings().second.at(setting_name).value = std::numeric_limits<float>::quiet_NaN();
+				}
+			}
+			catch (const std::exception&)
+			{
+				std::cout << "uh oh\n";
+			}
+			std::cout << "Editable after gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n\n';
 			break;
 
-		//case Generator::InputType::GUI_CHECK_BOX:
-		//	value = GuiCheckBox({ this_rect.x, this_rect.y, this_rect.height, this_rect.height }, "Points", setting.value);
-		//	setting.value = value;
-		//	break;
+		case Generator::InputType::GUI_CHECK_BOX:
+			generators.GetUserSettings().second.at(setting_name).value = (float)(int)GuiCheckBox({ this_rect.x, this_rect.y, this_rect.height, this_rect.height }, "Points", std::get<float>(setting.value));
+			break;
 
 		default:
 			break;
