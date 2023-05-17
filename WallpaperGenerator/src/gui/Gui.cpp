@@ -37,14 +37,6 @@ Gui::Gui(int kWindowWidth, int kWindowHeight)
 
 	scroll_pos = { 0 };
 
-	//background_image_img.format = EXPORT_FORMAT;
-	//background_image_img.height = EXPORT_HEIGHT;
-	//background_image_img.width = EXPORT_WIDTH;
-	//background_image_img.data = EXPORT_DATA;
-	//background_image_img.mipmaps = 1;
-
-	//background_image = LoadTextureFromImage(background_image_img);
-
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 }
 
@@ -83,7 +75,6 @@ void Gui::MainMenuScreen()
 {
 	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
 	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
-	//DrawTexturePro(background_image, { 0, 0, 1599, 900 }, { 0, 0, 1600, 900 }, { 0, 0 }, 0.0f, WHITE);
 	if (GuiButton(create_rect, "Create"))
 	{
 		active_menu = Menu::CREATE;
@@ -107,7 +98,6 @@ void Gui::CreateScreen()
 {
 	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
 	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
-	//DrawTexturePro(background_image, { 0, 0, 1599, 900 }, { 0, 0, 1600, 900 }, { 0, 0 }, 0.0f, WHITE);
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
@@ -179,6 +169,7 @@ void Gui::GeneratorScreen(Generators& generators)
 			break;
 
 		case Generator::InputType::GUI_COLOR_PICKER:
+			// Set color picker rectangle height to be 4x larger than the default
 			this_rect.height *= 4;
 			index += 2;
 			generators.GetUserSettings().second.at(setting_name).value = GuiColorPicker(this_rect, "", std::get<Color>(setting.value));
@@ -186,43 +177,28 @@ void Gui::GeneratorScreen(Generators& generators)
 
 		case Generator::InputType::GUI_TEXT_BOX:
 			float_value = std::get<float>(generators.GetUserSettings().second.at(setting_name).value);
-			if (std::isnan(float_value))
-			{
+
+			if (std::isnan(float_value)) // If float is NaN, set text to nothing
 				*text = _strdup("");
-			}
-			else
+			else // Else convert float to int and set that as text
 			{
 				int_value = static_cast<int>(float_value);
 				ss << int_value;
 				*text = _strdup(ss.str().c_str());
 			}
 
-			std::cout << "Editable before gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n';
+			// Draw text box and update active satus
 			if (GuiTextBox(this_rect, *text, 7, generators.GetUserSettings().second.at(setting_name).text_box_editable))
-			{
 				generators.GetUserSettings().second.at(setting_name).text_box_editable = !generators.GetUserSettings().second.at(setting_name).text_box_editable;
 
-				std::cout << "Editable inside gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n';
-			}
-
-			try
+			try // Try-catch ignores non integer characters being input into the text box. Better solution needed
 			{
-				if (*text && *text[0])
-				{
-					// Convert the non-empty text to a float value
+				if (*text && *text[0]) // Convert the non-empty text to a float value
 					generators.GetUserSettings().second.at(setting_name).value = std::stof(*text);
-				}
-				else
-				{
-					// Set the value to NaN for empty text
+				else // Set the value to NaN for empty text
 					generators.GetUserSettings().second.at(setting_name).value = std::numeric_limits<float>::quiet_NaN();
-				}
 			}
-			catch (const std::exception&)
-			{
-				std::cout << "uh oh\n";
-			}
-			std::cout << "Editable after gui box: " << std::boolalpha << generators.GetUserSettings().second.at(setting_name).text_box_editable << '\n\n';
+			catch (const std::exception&) { std::cout << "Invalid input\n"; }
 			break;
 
 		case Generator::InputType::GUI_CHECK_BOX:
@@ -256,10 +232,6 @@ void Gui::GeneratorScreen(Generators& generators)
 
 	if (GuiButton(reset_settings, "Reset settings"))
 		generators.ResetSettings();
-
-	// Apply shader
-	//if (shader_on)
-	//	BeginShaderMode(shader);
 
 	DrawRectangle(preview_rect.x - 5, preview_rect.y - 5, preview_rect.width + 10, preview_rect.height + 10, RAYWHITE);
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);

@@ -9,16 +9,8 @@ Voronoi::Voronoi()
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load voronoi.json\n";
 	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/voronoi.json"));
-	/*default_settings =
-	{
-		{ "Window Width", 1920, 0, std::pair{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
-		{ "Window Height", 1080, 0, std::pair{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
-		{ "Seed", 69420, 0, std::pair{static_cast<float>(0), static_cast<float>(UINT32_MAX)}, "Random noise seed", InputType::GUI_TEXT_BOX, "69420", false},
-		{ "Seed Count", 20, 0, std::pair{ static_cast<float>(1), static_cast<float>(100) }, "Amount of seeds for diagram", InputType::GUI_TEXT_BOX, "20", false },
-		{ "Render Points", 1, 0, std::pair{ static_cast<float>(0), static_cast<float>(1) }, "Whether to render points", InputType::GUI_CHECK_BOX, "1", false }
-	};*/
 	user_settings = default_settings;
-	InitializeDefaultVariablesFromSettings();
+	Voronoi::InitializeDefaultVariablesFromSettings();
 	Voronoi::ApplySettings();
 }
 
@@ -29,11 +21,11 @@ std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::S
 
 void Voronoi::InitializeDefaultVariablesFromSettings()
 {
-	window_width = std::get<float>(default_settings.second["Window Width"].value);
-	window_height = std::get<float>(default_settings.second["Window Height"].value);
-	seed = std::get<float>(default_settings.second["Seed"].value);
-	seed_count = std::get<float>(default_settings.second["Seed Count"].value);
-	render_points = (bool)std::get<float>(default_settings.second["Render Points"].value);
+	window_width = std::get<float>(user_settings.second["Window Width"].value);
+	window_height = std::get<float>(user_settings.second["Window Height"].value);
+	seed = std::get<float>(user_settings.second["Seed"].value);
+	seed_count = std::get<float>(user_settings.second["Seed Count"].value);
+	render_points = (bool)std::get<float>(user_settings.second["Render Points"].value);
 }
 
 void Voronoi::GenerateRandomSeeds()
@@ -90,6 +82,7 @@ void Voronoi::Update()
 
 void Voronoi::ApplySettings()
 {
+	InitializeDefaultVariablesFromSettings();
 	rendered = false;
 
 	// Init texture
