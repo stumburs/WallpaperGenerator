@@ -9,19 +9,8 @@ Shapes::Shapes()
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load shapes.json\n";
 	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/shapes.json"));
-	/*default_settings =
-	{
-		{ "Window Width", 1920, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1920) }, "Final image horizontal resolution", InputType::GUI_TEXT_BOX, "1920", false },
-		{ "Window Height", 1080, 0, std::pair<float, float>{ static_cast<float>(2), static_cast<float>(1080) }, "Final image vertical resolution", InputType::GUI_TEXT_BOX, "1080", false },
-		{ "Seed", 69420, 0, std::pair<float, float>{static_cast<float>(0), static_cast<float>(UINT32_MAX) }, "Random noise seed", InputType::GUI_TEXT_BOX, "1234", false },
-		{ "Shapes Amount", 20, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(100) }, "Amount of shapes to draw", InputType::GUI_TEXT_BOX, "20", false },
-		{ "Background Color", 0, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(255255255) }, "Background color", InputType::GUI_COLOR_PICKER, "000000000"},
-		{ "Shape Alpha", 255, 0, std::pair<float, float>{ static_cast<float>(1), static_cast<float>(255) }, "How transparent each shape is", InputType::GUI_SLIDER_BAR  },
-		{ "Blend Mode", BlendMode::BLEND_ADDITIVE, 0, std::pair<float, float>{ static_cast<float>(0), static_cast<float>(5) }, "Particle and background image blending."}
-	};*/
-
 	user_settings = default_settings;
-
+	Shapes::InitializeDefaultVariablesFromSettings();
 	Shapes::ApplySettings();
 }
 
@@ -32,12 +21,12 @@ std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::S
 
 void Shapes::InitializeDefaultVariablesFromSettings()
 {
-	window_width = std::get<float>(default_settings.second["Window Width"].value);
-	window_height = std::get<float>(default_settings.second["Window Height"].value);
-	seed = std::get<float>(default_settings.second["Seed"].value);
-	shapes_amount = std::get<float>(default_settings.second["Shapes Amount"].value);
-	background_color = std::get<Color>(default_settings.second["Background Color"].value);
-	shape_alpha = std::get<float>(default_settings.second["Shape Alpha"].value);
+	window_width = std::get<float>(user_settings.second["Window Width"].value);
+	window_height = std::get<float>(user_settings.second["Window Height"].value);
+	seed = std::get<float>(user_settings.second["Seed"].value);
+	shapes_amount = std::get<float>(user_settings.second["Shapes Amount"].value);
+	background_color = std::get<Color>(user_settings.second["Background Color"].value);
+	shape_alpha = std::get<float>(user_settings.second["Shape Alpha"].value);
 }
 
 void Shapes::Update()
@@ -58,6 +47,7 @@ void Shapes::Update()
 
 void Shapes::ApplySettings()
 {
+	InitializeDefaultVariablesFromSettings();
 	shapes_drawn = 0;
 
 	// Init texture
