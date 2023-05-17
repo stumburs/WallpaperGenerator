@@ -6,6 +6,7 @@ A Wallpaper Generator program that lets you design and create procedurally gener
 This project uses uses:
 - [Inspiration](https://youtu.be/BjoM9oKOAKY) A video from The Coding Train for creating the flowfield generator.
 - [Perlin Noise Library](https://github.com/Reputeless/PerlinNoise)
+- [JSON for Moder C++](https://github.com/nlohmann/json)
 - [Raylib](https://github.com/raysan5/raylib)
 
 This project is currently being developed as a final qualification project for school.
