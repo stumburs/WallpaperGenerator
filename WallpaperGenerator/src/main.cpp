@@ -5,18 +5,20 @@
 #include <iostream>
 #include "gui/Gui.h"
 
-const int kWindowWidth = 1600;
-const int kWindowHeight = 900;
+int window_width = 1600;
+int window_height = 900;
 
 int main()
 {
 	// Init window
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
-	InitWindow(kWindowWidth, kWindowHeight, "Wallpaper Generator");
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	InitWindow(window_width, window_height, "Wallpaper Generator");
 	SetTargetFPS(60);
 
 	// Init GUI
-	Gui gui(kWindowWidth, kWindowHeight);
+	Gui gui(window_width, window_height);
+
 
 	while (!WindowShouldClose())
 	{

@@ -5,39 +5,51 @@
 #include <sstream>
 #include <iomanip>
 #include <limits>
-Gui::Gui(int kWindowWidth, int kWindowHeight)
+Gui::Gui(int window_width, int window_height)
 {
-	this->kWindowWidth = kWindowWidth;
-	this->kWindowHeight = kWindowHeight;
+	this->window_width = window_width;
+	this->window_height = window_height;
 
 	// Main menu
-	create_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2, 200, 50 };
-	view_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 75, 200, 50 };
-	github_link_rect = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 150 , 200, 50 };
-	back_rect_center = { (float)kWindowWidth / 2 - 100, (float)kWindowHeight / 2 + 150 , 200, 50 };
+	orig_create_rect = { (float)window_width / 2 - 100, (float)window_height / 2, 200, 50 };
+	create_rect = orig_create_rect;
+	orig_view_rect = { (float)window_width / 2 - 100, (float)window_height / 2 + 75, 200, 50 };
+	view_rect = orig_view_rect;
+	orig_github_link_rect = { (float)window_width / 2 - 100, (float)window_height / 2 + 150 , 200, 50 };
+	github_link_rect = orig_github_link_rect;
+	orig_back_rect_center = { (float)window_width / 2 - 100, (float)window_height / 2 + 150 , 200, 50 };
+	back_rect_center = orig_back_rect_center;
 
 	// Create menu
-	flowfield_rect = { (float)kWindowWidth / 2 - 225, (float)kWindowHeight / 2, 200, 50 };
-	shapes_rect = { (float)kWindowWidth / 2 + 25, (float)kWindowHeight / 2, 200, 50 };
-	voronoi_rect = { (float)kWindowWidth / 2 - 225, (float)kWindowHeight / 2 + 75, 200, 50 };
+	orig_flowfield_rect = { (float)window_width / 2 - 225, (float)window_height / 2, 200, 50 };
+	flowfield_rect = orig_flowfield_rect;
+	orig_shapes_rect = { (float)window_width / 2 + 25, (float)window_height / 2, 200, 50 };
+	shapes_rect = orig_shapes_rect;
+	orig_voronoi_rect = { (float)window_width / 2 - 225, (float)window_height / 2 + 75, 200, 50 };
+	voronoi_rect = orig_voronoi_rect;
 
 	// Generate
-	preview_rect = { (float)kWindowWidth - 850, 50, 800, 450 };
-	shader_checkbox = { (float)kWindowWidth - 850, 525, 40, 40 };
-	blend_slider = { (float)kWindowWidth - 650, 525, 400, 40 };
+	orig_preview_rect = { (float)window_width - 850, 50, 800, 450 };
+	preview_rect = orig_preview_rect;
+	//shader_checkbox = { (float)window_width - 850, 525, 40, 40 };
+	//blend_slider = { (float)window_width - 650, 525, 400, 40 };
 
 	// Row 1
-	update_settings = { (float)kWindowWidth - 800, 585, 160, 40 };
-	reset_settings = { (float)kWindowWidth - 600, 585, 160, 40 };
+	orig_update_settings = { (float)window_width - 800, 585, 160, 40 };
+	update_settings = orig_update_settings;
+	orig_reset_settings = { (float)window_width - 600, 585, 160, 40 };
+	reset_settings = orig_reset_settings;
 	// Row 2
-	save_image = { (float)kWindowWidth - 800, 645, 160, 40 };
+	orig_save_image = { (float)window_width - 800, 645, 160, 40 };
+	save_image = orig_save_image;
 	// Row 3
 	// Row 4
-	back_rect_corner = { (float)kWindowWidth - 800, 765, 160, 40 };
+	orig_back_rect_corner = { (float)window_width - 800, 765, 160, 40 };
+	back_rect_corner = orig_save_image;
 
 	scroll_pos = { 0 };
 
-	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+	GuiSetStyle(DEFAULT, TEXT_SIZE, scaled_text_size);
 }
 
 void Gui::Draw()
@@ -64,6 +76,46 @@ void Gui::Draw()
 
 void Gui::Update()
 {
+	// Update scaling factor
+	scale_x = GetScreenWidth() / static_cast<float>(1600);
+	scale_y = GetScreenHeight() / static_cast<float>(900);
+
+	// Update font sizes
+	float font_scaling_factor = (scale_x + scale_y) / 2.0f;
+
+	// Title text
+	scaled_title_font_size = orig_title_font_size * font_scaling_factor;
+	// Version subtext
+	scaled_version_font_size = orig_version_font_size * font_scaling_factor;
+
+	// Button text size
+	scaled_text_size = default_text_size * font_scaling_factor;
+	GuiSetStyle(DEFAULT, TEXT_SIZE, scaled_text_size);
+
+	// Update rects
+	// Main menu
+	create_rect = ScaleRect(orig_create_rect, scale_x, scale_y);
+	view_rect = ScaleRect(orig_view_rect, scale_x, scale_y);
+	github_link_rect = ScaleRect(orig_github_link_rect, scale_x, scale_y);
+	back_rect_center = ScaleRect(orig_back_rect_center, scale_x, scale_y);
+
+	// Create menu
+	flowfield_rect = ScaleRect(orig_flowfield_rect, scale_x, scale_y);
+	shapes_rect = ScaleRect(orig_shapes_rect, scale_x, scale_y);
+	voronoi_rect = ScaleRect(orig_voronoi_rect, scale_x, scale_y);
+
+	// Generator screen
+	preview_rect = ScaleRect(orig_preview_rect, scale_x, scale_y);
+	save_image = ScaleRect(orig_save_image, scale_x, scale_y);
+	update_settings = ScaleRect(orig_update_settings, scale_x, scale_y);
+	reset_settings = ScaleRect(orig_reset_settings, scale_x, scale_y);
+	back_rect_corner = ScaleRect(orig_back_rect_corner, scale_x, scale_y);
+
+	first_setting_rect = ScaleRect(orig_first_setting_rect, scale_x, scale_y);
+	scissor_bounds = ScaleRect(orig_scissor_bounds, scale_x, scale_y);
+	scissor_content = ScaleRect(orig_scissor_content, scale_x, scale_y);
+	scissor_area = ScaleRect(orig_scissor_area, scale_x, scale_y);
+
 	if (active_generator == Gui::ActiveGenerator::NONE)
 		return;
 
@@ -73,8 +125,8 @@ void Gui::Update()
 
 void Gui::MainMenuScreen()
 {
-	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
-	DrawText("Image Generator", kWindowWidth / 2 - MeasureText("Image Generator", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
+	DrawText("Image Generator", round(GetScreenWidth() / static_cast<float>(2) - MeasureText("Image Generator", scaled_title_font_size) / static_cast<float>(2) + 4 * scale_x), round(GetScreenHeight() / static_cast<float>(2) - 196 * scale_y), scaled_title_font_size, BLACK);
+	DrawText("Image Generator", round(GetScreenWidth() / 2 - MeasureText("Image Generator", scaled_title_font_size) / 2), round(GetScreenHeight() / static_cast<float>(2) - 200 * scale_y), scaled_title_font_size, RAYWHITE);
 	if (GuiButton(create_rect, "Create"))
 	{
 		active_menu = Menu::CREATE;
@@ -84,8 +136,8 @@ void Gui::MainMenuScreen()
 		ViewScreen();
 	}
 
-	DrawText(version_number.c_str(), kWindowWidth / 2 - MeasureText(version_number.c_str(), 20) / 2 + 2, kWindowHeight / 2 - 128, 20, BLACK);
-	DrawText(version_number.c_str(), kWindowWidth / 2 - MeasureText(version_number.c_str(), 20) / 2, kWindowHeight / 2 - 130, 20, RAYWHITE);
+	DrawText(version_number.c_str(), round(GetScreenWidth() / static_cast<float>(2) - MeasureText(version_number.c_str(), scaled_version_font_size) / static_cast<float>(2) + 2 * scale_x), round(GetScreenHeight() / static_cast<float>(2) - 128 * scale_y), scaled_version_font_size, BLACK);
+	DrawText(version_number.c_str(), round(GetScreenWidth() / 2 - MeasureText(version_number.c_str(), scaled_version_font_size) / 2), round(GetScreenHeight() / static_cast<float>(2) - 130 * scale_y), scaled_version_font_size, RAYWHITE);
 
 	if (GuiButton(github_link_rect, "GitHub"))
 	{
@@ -96,8 +148,8 @@ void Gui::MainMenuScreen()
 
 void Gui::CreateScreen()
 {
-	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2 + 4, kWindowHeight / 2 - 196, 60, BLACK);
-	DrawText("Create", kWindowWidth / 2 - MeasureText("Create", 60) / 2, kWindowHeight / 2 - 200, 60, RAYWHITE);
+	DrawText("Create", round(GetScreenWidth() / static_cast<float>(2) - MeasureText("Create", scaled_title_font_size) / static_cast<float>(2) + 4 * scale_x), round(GetScreenHeight() / static_cast<float>(2) - 196 * scale_y), scaled_title_font_size, BLACK);
+	DrawText("Create", round(GetScreenWidth() / 2 - MeasureText("Create", scaled_title_font_size) / 2), round(GetScreenHeight() / static_cast<float>(2) - 200 * scale_y), scaled_title_font_size, RAYWHITE);
 	if (GuiButton(flowfield_rect, "Flowfield"))
 	{
 		active_menu = Menu::GENERATOR;
@@ -135,7 +187,7 @@ void Gui::GeneratorScreen(Generators& generators)
 {
 	Vector2 mouse_pos = GetMousePosition();
 
-	Rectangle scissor_area = GuiScrollPanel({ 50, 45, 655, 800 }, "Settings", { 50, 50, 635, 2000 }, &scroll_pos);
+	scissor_area = GuiScrollPanel(scissor_bounds, "Settings", scissor_content, &scroll_pos);
 	BeginScissorMode(static_cast<int>(scissor_area.x), static_cast<int>(scissor_area.y), static_cast<int>(scissor_area.width), static_cast<int>(scissor_area.height));
 
 	// Render and get values from sliders
@@ -237,12 +289,13 @@ void Gui::GeneratorScreen(Generators& generators)
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();
 
-	DrawText("Preview", kWindowWidth - 425 - MeasureText("PREVIEW", 40) / 2, 250, 40, { 255, 255, 255, 60 });
+	DrawText("Preview", GetScreenWidth() - 425 * scale_x - MeasureText("Preview", 40) / 2, 250 * scale_y, 40, {255, 255, 255, 60});
 
 	if (GuiButton(back_rect_corner, "Back"))
 	{
 		active_menu = Menu::CREATE;
 		active_generator = Gui::ActiveGenerator::NONE;
+		scroll_pos = { 0 };
 		SetTargetFPS(60);
 	}
 }
