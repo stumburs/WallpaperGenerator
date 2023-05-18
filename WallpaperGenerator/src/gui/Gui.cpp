@@ -114,6 +114,7 @@ void Gui::Update()
 	first_setting_rect = ScaleRect(orig_first_setting_rect, scale_x, scale_y);
 	scissor_bounds = ScaleRect(orig_scissor_bounds, scale_x, scale_y);
 	scissor_content = ScaleRect(orig_scissor_content, scale_x, scale_y);
+	scissor_content.height = 2000;
 	scissor_area = ScaleRect(orig_scissor_area, scale_x, scale_y);
 
 	if (active_generator == Gui::ActiveGenerator::NONE)
