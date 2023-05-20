@@ -57,6 +57,10 @@ private:
 	Rectangle back_rect_corner;
 
 	// Create menu
+	Texture flowfield_demo_image;
+	Texture voronoi_demo_image;
+	Texture shapes_demo_image;
+
 	Rectangle orig_flowfield_rect;
 	Rectangle flowfield_rect;
 

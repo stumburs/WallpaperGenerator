@@ -21,6 +21,9 @@ Gui::Gui(int window_width, int window_height)
 	back_rect_center = orig_back_rect_center;
 
 	// Create menu
+	flowfield_demo_image = LoadTexture("cfg/flowfield.png");
+	voronoi_demo_image = LoadTexture("cfg/voronoi.png");
+	shapes_demo_image = LoadTexture("cfg/shapes.png");
 	orig_flowfield_rect = { (float)window_width / 2 - 225, (float)window_height / 2, 200, 50 };
 	flowfield_rect = orig_flowfield_rect;
 	orig_shapes_rect = { (float)window_width / 2 + 25, (float)window_height / 2, 200, 50 };
@@ -175,6 +178,16 @@ void Gui::CreateScreen()
 		active_menu = Menu::MAIN;
 		active_generator = Gui::ActiveGenerator::NONE;
 	}
+
+	// Demo images
+	float image_scaling_factor = (scale_x + scale_y) / 2.0f;
+	Vector2 draw_pos = { GetMousePosition().x - flowfield_demo_image.width / 2 * image_scaling_factor, GetMousePosition().y - flowfield_demo_image.height * image_scaling_factor - 20 * image_scaling_factor };
+	if (CheckCollisionPointRec(GetMousePosition(), flowfield_rect))
+		DrawTextureEx(flowfield_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), voronoi_rect))
+		DrawTextureEx(voronoi_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), shapes_rect))
+		DrawTextureEx(shapes_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
 }
 
 void Gui::ViewScreen()
