@@ -183,11 +183,11 @@ void Gui::CreateScreen()
 	float image_scaling_factor = (scale_x + scale_y) / 2.0f;
 	Vector2 draw_pos = { GetMousePosition().x - flowfield_demo_image.width / 2 * image_scaling_factor, GetMousePosition().y - flowfield_demo_image.height * image_scaling_factor - 20 * image_scaling_factor };
 	if (CheckCollisionPointRec(GetMousePosition(), flowfield_rect))
-		DrawTextureEx(flowfield_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
+		DrawTextureEx(flowfield_demo_image, {flowfield_rect.x - ((flowfield_demo_image.width - flowfield_rect.width) / 2) * image_scaling_factor, flowfield_rect.y - (flowfield_demo_image.height + 20) * image_scaling_factor}, 0, image_scaling_factor, WHITE);
 	if (CheckCollisionPointRec(GetMousePosition(), voronoi_rect))
-		DrawTextureEx(voronoi_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
+		DrawTextureEx(voronoi_demo_image, { voronoi_rect.x - ((voronoi_demo_image.width - voronoi_rect.width) / 2) * image_scaling_factor, voronoi_rect.y - (voronoi_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
 	if (CheckCollisionPointRec(GetMousePosition(), shapes_rect))
-		DrawTextureEx(shapes_demo_image, draw_pos, 0, image_scaling_factor, WHITE);
+		DrawTextureEx(shapes_demo_image, { shapes_rect.x - ((shapes_demo_image.width - shapes_rect.width) / 2) * image_scaling_factor, shapes_rect.y - (shapes_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
 }
 
 void Gui::ViewScreen()
