@@ -19,7 +19,6 @@ int main()
 	// Init GUI
 	Gui gui(window_width, window_height);
 
-
 	while (!WindowShouldClose())
 	{
 		// Update
