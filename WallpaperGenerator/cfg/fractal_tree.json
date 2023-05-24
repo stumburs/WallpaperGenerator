@@ -1,0 +1,98 @@
+{
+  "window_width": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Width",
+    "tooltip": "Final image horizontal resolution",
+    "value": 1920
+  },
+  "window_height": {
+    "input_type": "GUI_TEXT_BOX",
+    "name": "Window Height",
+    "tooltip": "Final image vertical resolution",
+    "value": 1080
+  },
+  "fork_angle": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Fork Angle",
+    "tooltip": "Fork Angle",
+    "value": 0.392,
+    "precision": 3,
+    "range": [ -1.5, 1.5 ]
+  },
+  "recursion_depth": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Recursion Depth",
+    "tooltip": "How many times branches are split",
+    "value": 10,
+    "precision": 0,
+    "range": [ 1, 25 ]
+  },
+  "line_thickness": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Line Thickness",
+    "tooltip": "How thick the starting line is",
+    "value": 10,
+    "precision": 0,
+    "range": [ 1, 100 ]
+  },
+  "line_thickness_change": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Line Thickness Change",
+    "tooltip": "By how much the line thickness changes each interation",
+    "value": 0.8,
+    "precision": 2,
+    "range": [ -2, 2 ]
+  },
+  "line_length": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Line Length",
+    "tooltip": "How long the starting line is",
+    "value": 150,
+    "precision": 0,
+    "range": [ 1, 1000 ]
+  },
+  "line_length_change": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Line Length Change",
+    "tooltip": "By how much the line length changes each interation",
+    "value": 0.8,
+    "precision": 2,
+    "range": [ -2, 2 ]
+  },
+  "left_angle_change": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Left Angle Change",
+    "tooltip": "By how much the left split angle changes",
+    "value": 0.8,
+    "precision": 2,
+    "range": [ -2, 2 ]
+  },
+  "right_angle_change": {
+    "input_type": "GUI_SLIDER_BAR",
+    "name": "Right Angle Change",
+    "tooltip": "By how much the right split angle changes",
+    "value": 0.8,
+    "precision": 2,
+    "range": [ -2, 2 ]
+  },
+  "line_color": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Line Color",
+    "tooltip": "Line color",
+    "value": [ 255, 255, 255, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  },
+  "background_color": {
+    "input_type": "GUI_COLOR_PICKER",
+    "name": "Background Color",
+    "tooltip": "Background color",
+    "value": [ 0, 0, 0, 255 ],
+    "range": [
+      [ 0, 0, 0, 0 ],
+      [ 255, 255, 255, 255 ]
+    ]
+  }
+}

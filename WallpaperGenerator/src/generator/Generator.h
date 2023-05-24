@@ -27,18 +27,6 @@ public:
 		bool text_box_editable = false;
 	};
 
-	//struct Setting
-	//{
-	//	std::string name;
-	//	float value;
-	//	int precision;
-	//	std::pair<float, float> range;
-	//	std::string tooltip;
-	//	int input_type;
-	//	std::string string_value = "";
-	//	bool text_box_editable = false;
-	//};
-
 	std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>> default_settings;
 	std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>> user_settings;
 

@@ -2,12 +2,14 @@
 #include "flowfield/Flowfield.h"
 #include "shapes/Shapes.h"
 #include "voronoi/Voronoi.h"
+#include "fractal_tree/FractalTree.h"
 
 Generators::Generators()
 {
 	generators.emplace_back(std::make_unique<Flowfield>());
 	generators.emplace_back(std::make_unique<Shapes>());
 	generators.emplace_back(std::make_unique<Voronoi>());
+	generators.emplace_back(std::make_unique<FractalTree>());
 }
 
 void Generators::SetActiveGenerator(int generator) { this->active_generator = generator; }

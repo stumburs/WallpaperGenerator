@@ -45,6 +45,9 @@
     <ClCompile Include="src\json\JSONReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\generator\fractal_tree\FractalTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\generator\flowfield\Particle.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\json\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\generator\fractal_tree\FractalTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

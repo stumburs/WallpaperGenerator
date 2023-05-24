@@ -19,7 +19,7 @@ private:
 		return { rect_x, rect_y, rect_width, rect_height };
 	}
 
-	const std::string version_number = "0.7-alpha";
+	const std::string version_number = "0.8-alpha";
 	const std::string github_url = "https://github.com/stumburs/WallpaperGenerator";
 
 	Texture2D preview_texture{};
@@ -60,6 +60,7 @@ private:
 	Texture flowfield_demo_image;
 	Texture voronoi_demo_image;
 	Texture shapes_demo_image;
+	Texture fractal_tree_demo_image;
 
 	Rectangle orig_flowfield_rect;
 	Rectangle flowfield_rect;
@@ -69,6 +70,9 @@ private:
 
 	Rectangle orig_voronoi_rect;
 	Rectangle voronoi_rect;
+
+	Rectangle orig_fractal_tree_rect;
+	Rectangle fractal_tree_rect;
 
 	// Generate
 	Rectangle orig_preview_rect;
@@ -106,7 +110,8 @@ private:
 		NONE = 0,
 		FLOWFIELD,
 		SHAPES,
-		VORONOI
+		VORONOI,
+		FRACTAL_TREE
 	};
 
 	Rectangle orig_first_setting_rect = { 110, 90, 400, 40 };

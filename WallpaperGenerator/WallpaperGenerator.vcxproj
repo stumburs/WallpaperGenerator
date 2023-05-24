@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\generator\fractal_tree\FractalTree.cpp" />
     <ClCompile Include="src\generator\Generator.cpp" />
     <ClCompile Include="src\Functions.cpp" />
     <ClCompile Include="src\generator\Generators.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\generator\fractal_tree\FractalTree.h" />
     <ClInclude Include="src\generator\Generator.h" />
     <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\generator\Generators.h" />

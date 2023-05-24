@@ -24,12 +24,15 @@ Gui::Gui(int window_width, int window_height)
 	flowfield_demo_image = LoadTexture("cfg/flowfield.png");
 	voronoi_demo_image = LoadTexture("cfg/voronoi.png");
 	shapes_demo_image = LoadTexture("cfg/shapes.png");
+	fractal_tree_demo_image = LoadTexture("cfg/fractal_tree.png");
 	orig_flowfield_rect = { (float)window_width / 2 - 225, (float)window_height / 2, 200, 50 };
 	flowfield_rect = orig_flowfield_rect;
 	orig_shapes_rect = { (float)window_width / 2 + 25, (float)window_height / 2, 200, 50 };
 	shapes_rect = orig_shapes_rect;
 	orig_voronoi_rect = { (float)window_width / 2 - 225, (float)window_height / 2 + 75, 200, 50 };
 	voronoi_rect = orig_voronoi_rect;
+	orig_fractal_tree_rect = { (float)window_width / 2 + 25, (float)window_height / 2 + 75, 200, 50 };
+	fractal_tree_rect = orig_fractal_tree_rect;
 
 	// Generate
 	orig_preview_rect = { (float)window_width - 850, 50, 800, 450 };
@@ -106,6 +109,7 @@ void Gui::Update()
 	flowfield_rect = ScaleRect(orig_flowfield_rect, scale_x, scale_y);
 	shapes_rect = ScaleRect(orig_shapes_rect, scale_x, scale_y);
 	voronoi_rect = ScaleRect(orig_voronoi_rect, scale_x, scale_y);
+	fractal_tree_rect = ScaleRect(orig_fractal_tree_rect, scale_x, scale_y);
 
 	// Generator screen
 	preview_rect = ScaleRect(orig_preview_rect, scale_x, scale_y);
@@ -173,6 +177,12 @@ void Gui::CreateScreen()
 		generators.SetActiveGenerator(Generators::GeneratorList::kVoronoi);
 		active_generator = Gui::ActiveGenerator::VORONOI;
 	}
+	if (GuiButton(fractal_tree_rect, "Fractal Tree"))
+	{
+		active_menu = Menu::GENERATOR;
+		generators.SetActiveGenerator(Generators::GeneratorList::kFractalTree);
+		active_generator = Gui::ActiveGenerator::FRACTAL_TREE;
+	}
 	if (GuiButton(back_rect_center, "Back"))
 	{
 		active_menu = Menu::MAIN;
@@ -183,11 +193,13 @@ void Gui::CreateScreen()
 	float image_scaling_factor = (scale_x + scale_y) / 2.0f;
 	Vector2 draw_pos = { GetMousePosition().x - flowfield_demo_image.width / 2 * image_scaling_factor, GetMousePosition().y - flowfield_demo_image.height * image_scaling_factor - 20 * image_scaling_factor };
 	if (CheckCollisionPointRec(GetMousePosition(), flowfield_rect))
-		DrawTextureEx(flowfield_demo_image, {flowfield_rect.x - ((flowfield_demo_image.width - flowfield_rect.width) / 2) * image_scaling_factor, flowfield_rect.y - (flowfield_demo_image.height + 20) * image_scaling_factor}, 0, image_scaling_factor, WHITE);
-	if (CheckCollisionPointRec(GetMousePosition(), voronoi_rect))
-		DrawTextureEx(voronoi_demo_image, { voronoi_rect.x - ((voronoi_demo_image.width - voronoi_rect.width) / 2) * image_scaling_factor, voronoi_rect.y - (voronoi_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
+		DrawTextureEx(flowfield_demo_image, { flowfield_rect.x - ((flowfield_demo_image.width - flowfield_rect.width) / 2) * image_scaling_factor, flowfield_rect.y - (flowfield_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
 	if (CheckCollisionPointRec(GetMousePosition(), shapes_rect))
 		DrawTextureEx(shapes_demo_image, { shapes_rect.x - ((shapes_demo_image.width - shapes_rect.width) / 2) * image_scaling_factor, shapes_rect.y - (shapes_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), voronoi_rect))
+		DrawTextureEx(voronoi_demo_image, { voronoi_rect.x - ((voronoi_demo_image.width - voronoi_rect.width) / 2) * image_scaling_factor, voronoi_rect.y - (voronoi_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
+	if (CheckCollisionPointRec(GetMousePosition(), fractal_tree_rect))
+		DrawTextureEx(fractal_tree_demo_image, { fractal_tree_rect.x - ((fractal_tree_demo_image.width - fractal_tree_rect.width) / 2) * image_scaling_factor, fractal_tree_rect.y - (fractal_tree_demo_image.height + 20) * image_scaling_factor }, 0, image_scaling_factor, WHITE);
 }
 
 void Gui::ViewScreen()
@@ -303,7 +315,7 @@ void Gui::GeneratorScreen(Generators& generators)
 	DrawTexturePro(preview_texture, { 0, 0, (float)preview_texture.width, (float)-preview_texture.height }, preview_rect, { 0, 0 }, 0.0f, WHITE);
 	EndShaderMode();
 
-	DrawText("Preview", GetScreenWidth() - 425 * scale_x - MeasureText("Preview", 40) / 2, 250 * scale_y, 40, {255, 255, 255, 60});
+	DrawText("Preview", GetScreenWidth() - 425 * scale_x - MeasureText("Preview", 40) / 2, 250 * scale_y, 40, { 255, 255, 255, 60 });
 
 	if (GuiButton(back_rect_corner, "Back"))
 	{
