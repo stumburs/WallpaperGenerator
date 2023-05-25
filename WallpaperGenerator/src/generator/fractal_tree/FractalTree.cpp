@@ -2,14 +2,21 @@
 #include <random>
 #include "../../Functions.h"
 #include "../../json/JSONReader.h"
+#include "../../json/JSONWriter.h"
 
 FractalTree::FractalTree()
 {
 	std::cout << "Fractal Tree\n";
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load fractal_tree.json\n";
-	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/fractal_tree.json"));
-	user_settings = default_settings;
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\fractal_tree.json"));
+	if (FileExists("cfg\\autosave_fractal_tree.json"))
+	{
+		std::cout << "Loading autosaved settings for Fractal Tree\n";
+		user_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\autosave_fractal_tree.json"));
+	}
+	else
+		user_settings = default_settings;
 	FractalTree::InitializeDefaultVariablesFromSettings();
 	FractalTree::ApplySettings();
 }
@@ -33,6 +40,11 @@ void FractalTree::InitializeDefaultVariablesFromSettings()
 	right_change = std::get<float>(user_settings.second["Right Angle Change"].value);
 	color = std::get<Color>(user_settings.second["Line Color"].value);
 	background_color = std::get<Color>(user_settings.second["Background Color"].value);
+}
+
+void FractalTree::SaveSettingsToJson()
+{
+	JSONWriter::WriteSettingsToJson(user_settings, "cfg\\autosave_fractal_tree.json");
 }
 
 void FractalTree::Update()

@@ -6,13 +6,21 @@
 #include <cmath>
 #include <iostream>
 #include "../../json/JSONReader.h"
+#include "../../json/JSONWriter.h"
+
 Flowfield::Flowfield()
 {
 	std::cout << "Flowfield\n";
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load flowfield.json\n";
-	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/flowfield.json"));
-	user_settings = default_settings;
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\flowfield.json"));
+	if (FileExists("cfg\\autosave_flowfield.json"))
+	{
+		std::cout << "Loading autosaved settings for Flowfield\n";
+		user_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\autosave_flowfield.json"));
+	}
+	else
+		user_settings = default_settings;
 	Flowfield::InitializeDefaultVariablesFromSettings();
 	Flowfield::ApplySettings();
 }
@@ -37,6 +45,11 @@ void Flowfield::InitializeDefaultVariablesFromSettings()
 	bottom = std::get<Color>(user_settings.second["Bottom"].value);
 	left = std::get<Color>(user_settings.second["Left"].value);
 	right = std::get<Color>(user_settings.second["Right"].value);
+}
+
+void Flowfield::SaveSettingsToJson()
+{
+	JSONWriter::WriteSettingsToJson(user_settings, "cfg\\autosave_flowfield.json");
 }
 
 std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& Flowfield::GetUserSettings()

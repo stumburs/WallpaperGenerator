@@ -27,6 +27,7 @@ public:
 	void ResetSettings();
 	std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& GetUserSettings();
 	Texture2D GetImage();
+	void SaveSettingsToJson();
 private:
 	std::vector<std::unique_ptr<Generator>> generators;
 	int active_generator = GeneratorList::kFlowfield;

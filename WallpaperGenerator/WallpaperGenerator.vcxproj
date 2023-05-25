@@ -144,6 +144,7 @@
     <ClCompile Include="src\generator\flowfield\Particle.cpp" />
     <ClCompile Include="src\generator\shapes\Shapes.cpp" />
     <ClCompile Include="src\json\JSONReader.cpp" />
+    <ClCompile Include="src\json\JSONWriter.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="src\gui\Gui.h" />
     <ClInclude Include="src\json\json.hpp" />
     <ClInclude Include="src\json\JSONReader.h" />
+    <ClInclude Include="src\json\JSONWriter.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\generator\flowfield\Flowfield.h" />
     <ClInclude Include="src\generator\flowfield\Particle.h" />

@@ -1,15 +1,25 @@
 #include "Shapes.h"
 #include <random>
+#include <map>
+#include <string>
+#include <vector>
 #include "../../Functions.h"
 #include "../../json/JSONReader.h"
+#include "../../json/JSONWriter.h"
 
 Shapes::Shapes()
 {
 	std::cout << "Shapes\n";
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load shapes.json\n";
-	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/shapes.json"));
-	user_settings = default_settings;
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\shapes.json"));
+	if (FileExists("cfg\\autosave_shapes.json"))
+	{
+		std::cout << "Loading autosaved settings for Shapes\n";
+		user_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\autosave_shapes.json"));
+	}
+	else
+		user_settings = default_settings;
 	Shapes::InitializeDefaultVariablesFromSettings();
 	Shapes::ApplySettings();
 }
@@ -27,6 +37,11 @@ void Shapes::InitializeDefaultVariablesFromSettings()
 	shapes_amount = std::get<float>(user_settings.second["Shapes Amount"].value);
 	background_color = std::get<Color>(user_settings.second["Background Color"].value);
 	shape_alpha = std::get<float>(user_settings.second["Shape Alpha"].value);
+}
+
+void Shapes::SaveSettingsToJson()
+{
+	JSONWriter::WriteSettingsToJson(user_settings, "cfg\\autosave_shapes.json");
 }
 
 void Shapes::Update()

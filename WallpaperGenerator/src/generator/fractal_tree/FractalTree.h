@@ -36,6 +36,7 @@ public:
 	void ResetSettings();
 	std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& GetUserSettings();
 	void InitializeDefaultVariablesFromSettings();
+	void SaveSettingsToJson();
 	Texture2D GetImage();
 
 private:

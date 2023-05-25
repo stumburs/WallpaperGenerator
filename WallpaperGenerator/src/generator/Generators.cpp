@@ -19,3 +19,4 @@ void Generators::ApplySettings() { generators[active_generator]->ApplySettings()
 void Generators::ResetSettings() { generators[active_generator]->ResetSettings(); }
 std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& Generators::GetUserSettings() { return generators[active_generator]->GetUserSettings(); }
 Texture2D Generators::GetImage() { return generators[active_generator]->GetImage(); }
+void Generators::SaveSettingsToJson() { generators[active_generator]->SaveSettingsToJson(); };

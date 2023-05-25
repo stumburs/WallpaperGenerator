@@ -306,7 +306,10 @@ void Gui::GeneratorScreen(Generators& generators)
 	}
 
 	if (GuiButton(update_settings, "Apply settings"))
+	{
 		generators.ApplySettings();
+		generators.SaveSettingsToJson();
+	}
 
 	if (GuiButton(reset_settings, "Reset settings"))
 		generators.ResetSettings();

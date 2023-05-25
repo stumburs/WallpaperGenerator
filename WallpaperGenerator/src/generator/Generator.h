@@ -36,5 +36,6 @@ public:
 	virtual Texture2D GetImage() = 0;
 	virtual std::pair<std::vector<std::string>, std::unordered_map<std::string, Generator::Setting>>& GetUserSettings() = 0;
 	virtual void InitializeDefaultVariablesFromSettings() = 0;
+	virtual void SaveSettingsToJson() = 0;
 	Color RGBFromString(const std::string& str);
 };

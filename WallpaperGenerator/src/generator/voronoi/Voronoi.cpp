@@ -2,14 +2,21 @@
 #include <random>
 #include "../../Functions.h"
 #include "../../json/JSONReader.h"
+#include "../../json/JSONWriter.h"
 
 Voronoi::Voronoi()
 {
 	std::cout << "Voronoi\n";
 	std::cout << "App directory: " << GetApplicationDirectory() << '\n';
 	std::cout << "Attempting to load voronoi.json\n";
-	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg/voronoi.json"));
-	user_settings = default_settings;
+	default_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\voronoi.json"));
+	if (FileExists("cfg\\autosave_voronoi.json"))
+	{
+		std::cout << "Loading autosaved settings for Voronoi\n";
+		user_settings = JSONReader::LoadSettingsFromJson(std::string("cfg\\autosave_voronoi.json"));
+	}
+	else
+		user_settings = default_settings;
 	Voronoi::InitializeDefaultVariablesFromSettings();
 	Voronoi::ApplySettings();
 }
@@ -26,6 +33,11 @@ void Voronoi::InitializeDefaultVariablesFromSettings()
 	seed = std::get<float>(user_settings.second["Seed"].value);
 	seed_count = std::get<float>(user_settings.second["Seed Count"].value);
 	render_points = (bool)std::get<float>(user_settings.second["Render Points"].value);
+}
+
+void Voronoi::SaveSettingsToJson()
+{
+	JSONWriter::WriteSettingsToJson(user_settings, "cfg\\autosave_voronoi.json");
 }
 
 void Voronoi::GenerateRandomSeeds()
