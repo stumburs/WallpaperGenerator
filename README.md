@@ -5,6 +5,8 @@
 [![Latest Release](https://img.shields.io/github/v/release/stumburs/WallpaperGenerator?style=for-the-badge)](https://github.com/stumburs/WallpaperGenerator/releases/latest)
 
 ---
+## Description video with latvian subtitles
+https://github.com/stumburs/WallpaperGenerator/assets/70687973/b55e0287-5393-49f8-a1cd-8d28e7aa310d
 
 ## About
 A Wallpaper Generator program that lets you design and create procedurally generated wallpaper by specifying various different parameters based off many mathematical principles and functions written in C++20.
